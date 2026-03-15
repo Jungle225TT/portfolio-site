@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jardin d'Asie — 中餐厅数字化菜单 — 姜亭汀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--green-deep:#1a3a2a;--green-dark:#2d5a3f;--green-mid:#3d8b5e;--green-light:#52b788;--green-glow:#74e8a8;--green-pale:#b7e4c7;--blue-deep:#0d1b2a;--blue-dark:#1b2d4f;--blue-mid:#2a5d8f;--blue-light:#4da8da;--blue-glow:#7dd3fc;--blue-pale:#a8dadc;--bg-primary:#0a1a12;--bg-card:rgba(20,45,30,0.6);--bg-glass:rgba(255,255,255,0.04);--text-primary:#e8f5ee;--text-secondary:#9bbfaa;--text-muted:#5a7f6a;--accent:#52b788;--accent-blue:#4da8da;--border:rgba(82,183,136,0.15);--font-display:'Playfair Display','Noto Serif SC',serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.7;min-height:100vh}
+.back-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 3rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,18,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);animation:backNavIn .5s ease-out}
+@keyframes backNavIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.back-link{display:inline-flex;align-items:center;gap:.6rem;color:var(--text-secondary);text-decoration:none;font-family:var(--font-mono);font-size:.85rem;letter-spacing:.04em;transition:color .3s,transform .25s ease}
+.back-link:hover{color:var(--green-light)}.back-link:hover svg{transform:translateX(-3px)}.back-link svg{width:18px;height:18px;transition:transform .25s ease}
+.back-nav-logo{font-family:var(--font-display);font-size:1.1rem;color:var(--text-primary);text-decoration:none}.back-nav-logo span{color:var(--green-light)}
+.project-switcher{display:flex;align-items:center;gap:.25rem;font-family:var(--font-mono);font-size:.78rem}
+.project-switcher-label{color:var(--text-muted);margin-right:.5rem;letter-spacing:.05em}
+.project-switcher a{padding:.35rem .65rem;border-radius:8px;color:var(--text-muted);text-decoration:none;transition:color .25s,background .25s}
+.project-switcher a:hover{color:var(--green-light);background:rgba(82,183,136,0.1)}
+.project-switcher a.active{color:var(--green-light);background:rgba(82,183,136,0.15);cursor:default;pointer-events:none}
+.project-hero{padding:8rem 3rem 4rem;max-width:1100px;margin:0 auto}
+.project-hero-label{font-family:var(--font-mono);font-size:.8rem;color:var(--green-light);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem}
+.project-hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.5rem);line-height:1.2;margin-bottom:.8rem;background:linear-gradient(135deg,var(--text-primary),var(--green-pale));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.project-hero-en{font-size:1.1rem;color:var(--text-muted);font-style:italic;margin-bottom:2rem}
+.project-hero-meta{display:flex;flex-wrap:wrap;gap:1.5rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.project-meta-item{display:flex;flex-direction:column;gap:.3rem}
+.project-meta-label{font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em}
+.project-meta-value{font-size:.95rem;color:var(--text-secondary)}
+.project-hero-desc{font-size:1.1rem;color:var(--text-secondary);max-width:700px;line-height:1.8;margin-bottom:2rem}
+.detail-tech-tags{display:flex;flex-wrap:wrap;gap:.6rem}
+.detail-tech-tag{padding:.35rem 1rem;border-radius:20px;font-size:.8rem;font-family:var(--font-mono);background:rgba(82,183,136,0.1);color:var(--green-light);border:1px solid rgba(82,183,136,0.2)}
+.project-content{max-width:1100px;margin:0 auto;padding:0 3rem 6rem}
+.content-section{margin-bottom:4rem}
+.content-section-label{font-family:var(--font-mono);font-size:.75rem;color:var(--green-light);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem}
+.content-section h2{font-family:var(--font-display);font-size:1.6rem;margin-bottom:1.5rem;color:var(--text-primary)}
+.content-section p{color:var(--text-secondary);font-size:1rem;line-height:1.8;margin-bottom:1rem;max-width:750px}
+.image-gallery{display:grid;grid-template-columns:1fr;gap:2rem;margin-top:1.5rem}
+.image-gallery.grid-2{grid-template-columns:1fr 1fr}
+.gallery-item{border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg-card);transition:transform .3s ease,box-shadow .3s ease}
+.gallery-item:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(82,183,136,0.08)}
+.gallery-item img{width:100%;display:block}
+.gallery-item-caption{padding:1rem 1.2rem;font-size:.85rem;color:var(--text-muted);font-family:var(--font-mono);border-top:1px solid var(--border)}
+.image-placeholder{width:100%;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:linear-gradient(135deg,rgba(20,45,30,0.4),rgba(13,27,42,0.4));border:2px dashed var(--border);border-radius:16px;color:var(--text-muted);font-family:var(--font-mono);font-size:.85rem}
+.image-placeholder svg{width:48px;height:48px;opacity:.3}
+.project-footer{max-width:1100px;margin:0 auto;padding:3rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.footer-nav{display:flex;gap:2rem}
+.footer-nav a{color:var(--text-muted);text-decoration:none;font-family:var(--font-mono);font-size:.85rem;transition:color .3s;display:flex;align-items:center;gap:.5rem}
+.footer-nav a:hover{color:var(--green-light)}.footer-nav a svg{width:16px;height:16px}
+@media(max-width:768px){.back-nav{padding:1rem 1.5rem;flex-wrap:wrap;gap:.75rem}.project-switcher{order:3;width:100%;justify-content:center;flex-wrap:wrap}.project-switcher-label{display:none}.project-hero{padding:6rem 1.5rem 3rem}.project-content{padding:0 1.5rem 4rem}.project-hero h1{font-size:2rem}.project-hero-meta{flex-direction:column;gap:1rem}.image-gallery.grid-2{grid-template-columns:1fr}.project-footer{flex-direction:column;gap:1.5rem;padding:2rem 1.5rem}.links-grid{grid-template-columns:1fr}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.overview-scroll{max-height:50vh;overflow-y:auto;overflow-x:hidden;padding-right:.5rem;margin-top:1rem;margin-bottom:1.5rem;scroll-behavior:smooth}
+.overview-scroll::-webkit-scrollbar{width:6px}.overview-scroll::-webkit-scrollbar-track{background:var(--bg-glass);border-radius:3px}.overview-scroll::-webkit-scrollbar-thumb{background:var(--green-dark);border-radius:3px}.overview-scroll::-webkit-scrollbar-thumb:hover{background:var(--green-mid)}
+.overview-scroll p{color:var(--text-secondary);font-size:.95rem;line-height:1.9;margin-bottom:1.2rem;max-width:780px;text-align:justify}
+.overview-scroll p strong{color:var(--green-pale);font-weight:500}
+.highlights-scroll{max-height:75vh;overflow-y:auto;overflow-x:hidden;padding-right:.5rem;margin-top:1.5rem;scroll-behavior:smooth}
+.highlights-scroll::-webkit-scrollbar{width:6px}.highlights-scroll::-webkit-scrollbar-track{background:var(--bg-glass);border-radius:3px}.highlights-scroll::-webkit-scrollbar-thumb{background:var(--green-dark);border-radius:3px}.highlights-scroll::-webkit-scrollbar-thumb:hover{background:var(--green-mid)}
+.scroll-hint{display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);margin-top:.8rem;opacity:.7;animation:hintPulse 2s ease-in-out infinite}
+.scroll-hint svg{width:14px;height:14px}
+@keyframes hintPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.highlight-card{padding:2rem 2rem 2rem 2.5rem;border-radius:18px;background:var(--bg-card);border:1px solid var(--border);margin-bottom:1.2rem;position:relative;transition:border-color .35s,box-shadow .35s,transform .35s}
+.highlight-card:last-child{margin-bottom:0}
+.highlight-card:hover{border-color:var(--green-mid);box-shadow:0 6px 36px rgba(82,183,136,0.08);transform:translateX(4px)}
+.highlight-card::before{content:'';position:absolute;left:0;top:1.5rem;bottom:1.5rem;width:3px;border-radius:2px;background:linear-gradient(180deg,var(--green-light),var(--blue-light));opacity:.5;transition:opacity .3s}
+.highlight-card:hover::before{opacity:1}
+.highlight-header{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.highlight-num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(82,183,136,0.15),rgba(77,168,218,0.1));font-family:var(--font-mono);font-size:.8rem;font-weight:700;color:var(--green-light);flex-shrink:0}
+.highlight-title{font-family:var(--font-display);font-size:1.15rem;color:var(--text-primary);line-height:1.4}
+.highlight-body{color:var(--text-secondary);font-size:.92rem;line-height:1.85}
+.highlight-body strong{color:var(--green-pale);font-weight:500}
+.highlight-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1rem}
+.highlight-tag{padding:.2rem .7rem;border-radius:6px;font-size:.72rem;font-family:var(--font-mono);background:rgba(82,183,136,0.08);color:var(--green-light);border:1px solid rgba(82,183,136,0.12);letter-spacing:.03em}
+.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.link-card{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);text-decoration:none;transition:border-color .3s,box-shadow .3s,transform .3s}
+.link-card:hover{border-color:var(--green-mid);box-shadow:0 6px 30px rgba(82,183,136,0.1);transform:translateY(-2px)}
+.link-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;background:linear-gradient(135deg,rgba(82,183,136,0.15),rgba(116,232,168,0.1))}
+.link-card-info{display:flex;flex-direction:column;gap:.15rem}
+.link-card-title{font-size:.92rem;color:var(--text-primary);font-weight:500}
+.link-card-desc{font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono)}
+.link-card-arrow{margin-left:auto;color:var(--text-muted);transition:color .3s,transform .3s;flex-shrink:0}
+.link-card:hover .link-card-arrow{color:var(--green-light);transform:translateX(3px)}
+.link-card-arrow svg{width:16px;height:16px}
+
+.design-gallery-scroll {
+  max-height: 72vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.design-gallery-scroll::-webkit-scrollbar { width: 6px; }
+.design-gallery-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.design-gallery-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.design-gallery-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+</style>
+</head>
+
+<!-- Navigation -->
+<body>
+<nav class="back-nav">
+  <a href="../index.html" class="back-link" title="返回主页面">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    返回主页
+  </a>
+  <div class="project-switcher">
+    <span class="project-switcher-label">项目</span>
+    <a href="project-pawfly.html">PawFly</a>
+    <a href="project-monopoly.html">大富翁</a>
+    <a href="project-ticket.html">工单</a>
+    <a href="project-portfolio.html" class="active">餐厅</a>
+  </div>
+  <a href="../index.html" class="back-nav-logo">JTT<span>.</span>Garden</a>
+</nav>
+<header class="project-hero">
+  <div class="project-hero-label reveal">PROJECT 04</div>
+  <h1 class="reveal">Jardin d'Asie — 中餐厅数字化菜单与线上展示</h1>
+  <p class="project-hero-en reveal">Restaurant Digital Menu & Online Presence Design</p>
+  <div class="project-hero-meta reveal">
+    <div class="project-meta-item">
+      <span class="project-meta-label">角色</span>
+      <span class="project-meta-value">产品设计 / 内容策划 / 平台搭建与配置</span>
+    </div>
+  </div>
+  <p class="project-hero-desc reveal">为法国斯特拉斯堡实体中餐厅「Jardin d'Asie」完成数字化菜单设计与线上展示搭建。从菜单信息架构、内容编排到平台选型与多语言配置，独立完成了从需求对接到上线交付的完整流程，帮助餐厅建立标准化的线上点餐与品牌展示入口。</p>
+  <div class="detail-tech-tags reveal">
+    <span class="detail-tech-tag">Eatbu 平台</span><span class="detail-tech-tag">菜单设计</span><span class="detail-tech-tag">多语言（FR/EN）</span><span class="detail-tech-tag">SEO</span><span class="detail-tech-tag">响应式适配</span>
+  </div>
+</header>
+<main class="project-content">
+  <!-- Section 1: 项目概述 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">01 — 项目概述</span>
+    <h2>项目背景与目标</h2>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看完整内容</div>
+    <div class="overview-scroll">
+      <p>「Jardin d'Asie」是一家位于法国斯特拉斯堡的中餐厅，提供正宗中式菜品和外卖服务。餐厅此前缺少规范的线上展示渠道，菜单信息依赖纸质版或社交媒体图片传播，存在信息不完整、更新不及时、多语言支持缺失等问题，难以有效触达法语区本地顾客和外语游客群体。</p>
+      <p>基于这一需求，本人受委托为餐厅完成<strong>数字化菜单设计与线上展示平台搭建</strong>，目标是建立一个结构清晰、视觉友好、支持多语言的线上菜单页面，让顾客能够快速浏览菜品、了解价格，并通过地图定位找到餐厅。</p>
+      <p>项目的核心工作包括以下几个方面：</p>
+      <p><strong>第一，菜单信息架构与内容设计。</strong>对餐厅现有菜品进行系统梳理，按照品类（前菜、主菜、汤品、甜点、饮品等）重新组织菜单结构，为每道菜品撰写中法双语描述，确保信息准确且符合当地消费者的阅读习惯。</p>
+      <p><strong>第二，平台选型与搭建配置。</strong>经过对多个餐饮展示平台的调研对比，最终选择 <strong>Eatbu</strong> 作为线上菜单托管平台，因其专为餐饮行业设计，内置菜单管理、多语言切换、Google Maps 集成、移动端自适应等功能，能够以最低开发成本快速上线并持续维护。</p>
+      <p><strong>第三，多语言配置与本地化适配。</strong>配置法语（主语言）和英语两个版本，通过 hreflang 标签实现语言切换，兼顾本地法语顾客和国际游客的使用需求。同时优化 SEO 元数据（Meta Description、Open Graph Protocol、JSON-LD 结构化数据），提升餐厅在 Google 本地搜索中的可见度。</p>
+      <p><strong>第四，移动端体验优化。</strong>考虑到大部分顾客通过手机浏览菜单，确保页面在各种屏幕尺寸下的显示效果和交互体验，包括 Viewport 适配、触控友好的导航结构和快速加载性能。</p>
+      <p>总体而言，本项目是一次面向真实商业客户的产品设计实践，虽然技术实现依托成熟的 SaaS 平台，但在<strong>需求分析、信息架构、内容策划、平台选型和多语言本地化</strong>等产品经理核心能力维度上进行了完整的实战锻炼。</p>
+    </div>
+  </div>
+
+  <!-- Section 2: 核心亮点 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">02 — 核心亮点</span>
+    <h2>产品设计亮点</h2>
+    <p>项目在真实客户需求、信息架构、平台选型、多语言本地化和移动端优化五个维度进行了完整实践。</p>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看全部 5 个亮点</div>
+    <div class="highlights-scroll">
+      <div class="highlight-card"><div class="highlight-header"><div class="highlight-num">01</div><div class="highlight-title">面向真实客户的需求分析与产品交付</div></div><div class="highlight-body">项目服务于一家真实运营的法国中餐厅，需要直接与店主沟通需求、理解经营场景、对齐期望目标。从初始需求访谈到最终上线交付，独立完成了完整的项目闭环。<br><br>这与课堂项目的最大区别在于：需求来自<strong>真实的商业场景</strong>，设计决策必须考虑实际运营效率、顾客行为习惯和成本约束，而非仅追求技术实现。</div><div class="highlight-tags"><span class="highlight-tag">真实客户</span><span class="highlight-tag">需求分析</span><span class="highlight-tag">独立交付</span></div></div>
+      <div class="highlight-card"><div class="highlight-header"><div class="highlight-num">02</div><div class="highlight-title">结构化的菜单信息架构设计</div></div><div class="highlight-body">对餐厅原有菜品进行了系统梳理和重新分类，建立了清晰的<strong>品类层级结构</strong>（前菜 → 主菜 → 汤品 → 甜点 → 饮品），每个品类下按烹饪方式或食材进一步细分。<br><br>为每道菜品设计了标准化的信息卡片：菜品名称（中法对照）、价格、简要描述、标识（如辣度、素食标记等），确保顾客能在最短时间内找到目标菜品并完成决策。</div><div class="highlight-tags"><span class="highlight-tag">信息架构</span><span class="highlight-tag">内容设计</span><span class="highlight-tag">用户体验</span></div></div>
+      <div class="highlight-card"><div class="highlight-header"><div class="highlight-num">03</div><div class="highlight-title">平台选型决策 — 以最优 ROI 满足业务需求</div></div><div class="highlight-body">在项目初期对比了多种方案：自建网站（WordPress / 手写 HTML）、第三方外卖平台（Uber Eats / Deliveroo）、以及餐饮垂直 SaaS 平台。最终选择 <strong>Eatbu</strong>，原因在于：<br><br>它专为餐饮行业打造，<strong>零开发成本</strong>即可获得专业的菜单展示页面；内置 Google Maps 集成方便顾客导航；支持多语言切换满足国际化需求；响应式设计确保移动端体验；且餐厅方可自主更新菜品和价格，<strong>降低长期维护成本</strong>。这一选型思路体现了产品经理在技术方案和商业价值之间寻找最优平衡点的能力。</div><div class="highlight-tags"><span class="highlight-tag">平台选型</span><span class="highlight-tag">ROI 分析</span><span class="highlight-tag">Eatbu</span><span class="highlight-tag">SaaS</span></div></div>
+      <div class="highlight-card"><div class="highlight-header"><div class="highlight-num">04</div><div class="highlight-title">法英双语本地化与 SEO 优化</div></div><div class="highlight-body">配置了<strong>法语和英语</strong>两个完整版本，通过 hreflang 标签实现自动语言识别和切换，确保法语顾客和国际游客都能获得母语级别的浏览体验。<br><br>同时对 SEO 进行了系统优化：设置了精准的 <strong>Meta Description</strong> 和 <strong>SEO Title</strong>；使用 <strong>JSON-LD</strong> 结构化数据标注餐厅地址（PostalAddress Schema）和营业信息，提升 Google 本地搜索排名；配置 <strong>Open Graph Protocol</strong> 确保社交媒体分享时展示正确的餐厅信息和预览图。</div><div class="highlight-tags"><span class="highlight-tag">多语言</span><span class="highlight-tag">hreflang</span><span class="highlight-tag">SEO</span><span class="highlight-tag">JSON-LD</span></div></div>
+      <div class="highlight-card"><div class="highlight-header"><div class="highlight-num">05</div><div class="highlight-title">移动优先的用户体验设计</div></div><div class="highlight-body">考虑到餐厅顾客的核心使用场景——<strong>到店扫码看菜单</strong>或<strong>手机搜索附近餐厅</strong>——页面从一开始就以移动端为第一优先级进行设计。<br><br>通过 Viewport Meta 配置和响应式布局确保在不同手机屏幕上的阅读体验；菜单分类导航清晰可触达；菜品卡片信息密度适中，避免小屏幕上的信息过载；页面加载速度通过 CDN 分发优化，确保顾客在餐厅 WiFi 或移动网络下都能快速打开。</div><div class="highlight-tags"><span class="highlight-tag">Mobile First</span><span class="highlight-tag">响应式</span><span class="highlight-tag">CDN</span></div></div>
+    </div>
+  </div>
+
+  <!-- Section 3: 设计展示 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">03 — 设计展示</span>
+    <h2>线上页面展示</h2>
+    <p>菜单页面已上线运营，支持法英双语、Google Maps 导航和移动端完美适配。</p>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>上下滚动查看更多页面</div>
+    <div class="design-gallery-scroll">
+
+      <div class="image-gallery">
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅1.png" alt="餐厅线上菜单 — 首页">
+          <div class="gallery-item-caption">首页 / Home — 餐厅品牌展示与菜单入口</div>
+        </div>
+      </div>
+
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅2.png" alt="菜单分类浏览">
+          <div class="gallery-item-caption">菜单分类 / Menu Categories — 品类层级导航</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅3.png" alt="菜品详情展示">
+          <div class="gallery-item-caption">菜品详情 / Dish Details — 名称、价格与描述</div>
+        </div>
+      </div>
+
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅4.png" alt="多语言切换">
+          <div class="gallery-item-caption">多语言 / Multilingual — 法英双语切换</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅5.png" alt="移动端适配">
+          <div class="gallery-item-caption">移动端 / Mobile View — 响应式布局适配</div>
+        </div>
+      </div>
+
+      <div class="image-gallery" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/餐厅6.png" alt="地图与联系方式">
+          <div class="gallery-item-caption">地图与联系 / Map & Contact — Google Maps 集成与餐厅信息</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 4: 项目成果与总结 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">04 — 项目成果与总结</span>
+    <h2>成果与收获</h2>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看完整内容</div>
+    <div class="overview-scroll">
+      <p>项目最终成功上线并投入实际运营，餐厅 <strong>Jardin d'Asie</strong> 的数字化菜单通过 <a href="https://jardin-dasie.eatbu.com/?lang=fr" target="_blank" style="color:var(--green-light);">jardin-dasie.eatbu.com</a> 面向顾客提供服务。页面支持法英双语切换、Google Maps 导航、移动端完美适配，满足了餐厅日常运营的线上展示需求。</p>
+      <p><strong>产品思维提升方面</strong>，通过这个项目深刻体会到：面对真实的商业需求，最优方案不一定是从零开发，而是在理解用户场景和业务约束后，选择最合适的技术路径。平台选型本身就是一项重要的产品决策，需要综合考虑功能匹配度、开发成本、维护成本和可扩展性。</p>
+      <p><strong>实战能力方面</strong>，积累了完整的从需求对接 → 信息架构 → 内容策划 → 平台配置 → 多语言本地化 → SEO 优化 → 上线交付的项目经验。这些能力直接对应产品经理在实际工作中需要处理的核心任务：理解用户、定义产品、选择方案、推动落地。</p>
+    </div>
+  </div>
+
+  <!-- Section 5: 在线访问 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">05 — 在线访问</span>
+    <h2>项目链接</h2>
+    <div class="links-grid">
+      <a href="https://jardin-dasie.eatbu.com/?lang=fr" target="_blank" rel="noopener" class="link-card">
+        <div class="link-card-icon">🌐</div>
+        <div class="link-card-info"><div class="link-card-title">在线菜单（法语版）</div><div class="link-card-desc">jardin-dasie.eatbu.com</div></div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="https://jardin-dasie.eatbu.com/?lang=en" target="_blank" rel="noopener" class="link-card">
+        <div class="link-card-icon">🌍</div>
+        <div class="link-card-info"><div class="link-card-title">在线菜单（英语版）</div><div class="link-card-desc">jardin-dasie.eatbu.com/?lang=en</div></div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- Footer Navigation -->
+<footer class="project-footer">
+  <div class="footer-nav">
+    <a href="../index.html" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>返回主页</a>
+  </div>
+  <div class="footer-nav">
+    <a href="../index.html#projects">查看所有项目<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  </div>
+</footer>
+<script>
+const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible')}})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawFly — 姜亭汀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-deep: #1a3a2a;
+  --green-dark: #2d5a3f;
+  --green-mid: #3d8b5e;
+  --green-light: #52b788;
+  --green-glow: #74e8a8;
+  --green-pale: #b7e4c7;
+  --blue-deep: #0d1b2a;
+  --blue-dark: #1b2d4f;
+  --blue-mid: #2a5d8f;
+  --blue-light: #4da8da;
+  --blue-glow: #7dd3fc;
+  --blue-pale: #a8dadc;
+  --bg-primary: #0a1a12;
+  --bg-card: rgba(20, 45, 30, 0.6);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --text-primary: #e8f5ee;
+  --text-secondary: #9bbfaa;
+  --text-muted: #5a7f6a;
+  --accent: #52b788;
+  --accent-blue: #4da8da;
+  --border: rgba(82, 183, 136, 0.15);
+  --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ===== Back Navigation ===== */
+.back-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 26, 18, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  animation: backNavIn 0.5s ease-out;
+}
+
+@keyframes backNavIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: color 0.3s, transform 0.25s ease;
+}
+
+.back-link:hover {
+  color: var(--green-light);
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.back-link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+}
+
+.back-nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.back-nav-logo span {
+  color: var(--green-light);
+}
+
+/* ===== Project switcher (jump to other projects) ===== */
+.project-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.project-switcher-label {
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.project-switcher a {
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.25s, background 0.25s;
+}
+
+.project-switcher a:hover {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.1);
+}
+
+.project-switcher a.active {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.15);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ===== Project Hero ===== */
+.project-hero {
+  padding: 8rem 3rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.project-hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--green-light);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.project-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(135deg, var(--text-primary), var(--green-pale));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.project-hero-en {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.project-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.project-meta-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.project-meta-value {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.project-hero-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.detail-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.detail-tech-tag {
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  background: rgba(82, 183, 136, 0.1);
+  color: var(--green-light);
+  border: 1px solid rgba(82, 183, 136, 0.2);
+}
+
+/* ===== Content Area ===== */
+.project-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 3rem 6rem;
+}
+
+/* Section block */
+.content-section {
+  margin-bottom: 4rem;
+}
+
+.content-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--green-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.content-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.content-section p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  max-width: 750px;
+}
+
+/* Image gallery grid */
+.image-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.image-gallery.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.gallery-item {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(82, 183, 136, 0.08);
+}
+
+.gallery-item img {
+  width: 100%;
+  display: block;
+}
+
+.gallery-item-caption {
+  padding: 1rem 1.2rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--border);
+}
+
+/* Placeholder for images not yet uploaded */
+.image-placeholder {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(20, 45, 30, 0.4), rgba(13, 27, 42, 0.4));
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+}
+
+/* Key highlights / features list */
+.feature-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--green-mid);
+}
+
+.feature-card-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.feature-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== Footer ===== */
+.project-footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-nav a:hover {
+  color: var(--green-light);
+}
+
+.footer-nav a svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .back-nav { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+  .project-switcher { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .project-switcher-label { display: none; }
+  .project-hero { padding: 6rem 1.5rem 3rem; }
+  .project-content { padding: 0 1.5rem 4rem; }
+  .project-hero h1 { font-size: 2rem; }
+  .project-hero-meta { flex-direction: column; gap: 1rem; }
+  .feature-list { grid-template-columns: 1fr; }
+  .image-gallery.grid-2 { grid-template-columns: 1fr; }
+  .project-footer { flex-direction: column; gap: 1.5rem; padding: 2rem 1.5rem; }
+}
+
+/* ===== Scroll reveal animation ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 项目概述：可滚动文字区 */
+.overview-scroll {
+  max-height: 50vh; overflow-y: auto; overflow-x: hidden;
+  padding-right: 0.5rem; margin-top: 1rem; margin-bottom: 1.5rem; scroll-behavior: smooth;
+}
+.overview-scroll::-webkit-scrollbar { width: 6px; }
+.overview-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+.overview-scroll p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.9; margin-bottom: 1.2rem; max-width: 780px; text-align: justify; }
+.overview-scroll p strong { color: var(--green-pale); font-weight: 500; }
+
+/* 核心亮点：可滚动卡片列表 */
+.highlights-scroll {
+  max-height: 75vh; overflow-y: auto; overflow-x: hidden;
+  padding-right: 0.5rem; margin-top: 1.5rem; scroll-behavior: smooth;
+}
+.highlights-scroll::-webkit-scrollbar { width: 6px; }
+.highlights-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+/* 设计展示：可滚动图片区 */
+.design-gallery-scroll {
+  max-height: 72vh; overflow-y: auto; overflow-x: hidden;
+  padding-right: 0.5rem; margin-top: 1.5rem; scroll-behavior: smooth;
+}
+.design-gallery-scroll::-webkit-scrollbar { width: 6px; }
+.design-gallery-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.design-gallery-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.design-gallery-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+/* 滚动提示 */
+.scroll-hint {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);
+  margin-top: 0.8rem; opacity: 0.7; animation: hintPulse 2s ease-in-out infinite;
+}
+.scroll-hint svg { width: 14px; height: 14px; }
+@keyframes hintPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* 亮点卡片 */
+.highlight-card {
+  padding: 2rem 2rem 2rem 2.5rem; border-radius: 18px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  margin-bottom: 1.2rem; position: relative;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+}
+.highlight-card:last-child { margin-bottom: 0; }
+.highlight-card:hover { border-color: var(--green-mid); box-shadow: 0 6px 36px rgba(82, 183, 136, 0.08); transform: translateX(4px); }
+.highlight-card::before { content: ''; position: absolute; left: 0; top: 1.5rem; bottom: 1.5rem; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--green-light), var(--blue-light)); opacity: 0.5; transition: opacity 0.3s; }
+.highlight-card:hover::before { opacity: 1; }
+.highlight-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+.highlight-num { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, rgba(82, 183, 136, 0.15), rgba(77, 168, 218, 0.1)); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--green-light); flex-shrink: 0; }
+.highlight-title { font-family: var(--font-display); font-size: 1.15rem; color: var(--text-primary); line-height: 1.4; }
+.highlight-body { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.85; }
+.highlight-body strong { color: var(--green-pale); font-weight: 500; }
+.highlight-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1rem; }
+.highlight-tag { padding: 0.2rem 0.7rem; border-radius: 6px; font-size: 0.72rem; font-family: var(--font-mono); background: rgba(82, 183, 136, 0.08); color: var(--green-light); border: 1px solid rgba(82, 183, 136, 0.12); letter-spacing: 0.03em; }
+
+/* APP 截图缩小 — 竖屏手机图两列居中 */
+.design-gallery-scroll .image-gallery.grid-2 {
+  grid-template-columns: 1fr 1fr;
+  max-width: 680px;
+  gap: 1.2rem;
+}
+
+.design-gallery-scroll .gallery-item img {
+  width: 100%;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="back-nav">
+  <a href="../index.html" class="back-link" title="返回主页面">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    返回主页
+  </a>
+  <div class="project-switcher">
+    <span class="project-switcher-label">项目</span>
+    <a href="project-pawfly.html" class="active">PawFly</a>
+    <a href="project-monopoly.html">大富翁</a>
+    <a href="project-ticket.html">工单</a>
+    <a href="project-portfolio.html">餐厅</a>
+  </div>
+  <a href="../index.html" class="back-nav-logo">JTT<span>.</span>Garden</a>
+</nav>
+
+<!-- Project Hero -->
+<header class="project-hero">
+  <div class="project-hero-label reveal">PROJECT 01</div>
+  <h1 class="reveal">PawFly</h1>
+  <p class="project-hero-en reveal">Pet Air Travel Route Search APP</p>
+  
+  <div class="project-hero-meta reveal">
+    <div class="project-meta-item">
+      <span class="project-meta-label">角色</span>
+      <span class="project-meta-value">独立负责人 — 产品设计 / 功能规划 / 原型开发</span>
+    </div>
+  </div>
+
+  <p class="project-hero-desc reveal">独立发起宠物航空运输搜索应用 PawFly，从真实痛点出发推进 0→1 产品设计。撰写完整 PRD，定义用户画像、核心功能模块及产品路线图；完成数据库搭建与核心页面原型开发；目前正在推进航班数据源的接入方案调研与页面交互实现。项目持续迭代中。</p>
+  
+  <div class="detail-tech-tags reveal">
+    <span class="detail-tech-tag">React Native</span><span class="detail-tech-tag">Expo</span><span class="detail-tech-tag">Claude Code</span><span class="detail-tech-tag">PRD</span><span class="detail-tech-tag">产品设计</span>
+  </div>
+</header>
+
+<!-- Content Area -->
+<main class="project-content">
+
+  <!-- Section 1: 项目概述 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">01 — 项目概述</span>
+    <h2>项目背景与目标</h2>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看完整内容</div>
+    <div class="overview-scroll">
+      <p>宠物航空运输是一个信息高度碎片化的领域：各航空公司的宠物运输政策（客舱/货舱、品种限制、重量上限、费用）差异巨大且分散在各自官网；各国的宠物入境要求（健康证明、疫苗记录、狂犬抗体检测、隔离政策）散布于不同政府网站；多段联程旅行的宠物合规性更是无从一站式查询。宠物主人往往需要花费数小时甚至数天在多个网站之间交叉比对，才能确认一条可行的带宠出行路线。</p>
+      <p>本项目的灵感来源于真实经历：<strong>"我想带猫坐飞机回国，每家航空公司规则都不一样，没有任何平台能让我一次搞定。"</strong> 基于这一痛点，我独立发起并设计了 <strong>PawFly</strong> —— 一款帮助宠物主人搜索、比较和规划宠物友好航线的移动应用，定位为<strong>全球宠物航空出行的一站式搜索引擎</strong>。</p>
+      <p>项目从 2026 年 3 月启动，目前处于 MVP 阶段。本人作为唯一负责人，独立完成了从市场调研、用户画像、产品定义到原型开发的全流程工作。</p>
+      <p>产品的核心目标包括以下几个方面：</p>
+      <p><strong>第一，将宠物出行研究时间从数小时缩短到数分钟。</strong>通过整合航线搜索、航空公司宠物政策和目的地国家入境要求三大信息源，提供一站式查询体验，让用户输入出发地、目的地和宠物信息后即可获得完整的可行路线方案。</p>
+      <p><strong>第二，构建结构化的宠物航空政策数据库。</strong>初期手动收录全球 Top 50 航空公司的宠物运输政策，支持社区用户标记过期信息和提交修正，建立"官方数据 + 社区维护"的双轮更新机制。</p>
+      <p><strong>第三，实现智能宠物兼容性检查。</strong>用户创建宠物档案（品种、体重、健康记录等）后，系统自动比对航线限制，在搜索结果中标记不兼容项（超重、品种限制、缺少文件），降低信息遗漏风险。</p>
+      <p><strong>第四，建立社区驱动的信任评价体系。</strong>提供航空公司宠物友好度评分（5 星制 + 子维度：工作人员态度、登机流程、机上舒适度等）和目的地城市宠物友好度评分，积累真实用户经验，帮助后续用户做出更有信心的决策。</p>
+      <p><strong>第五，支持多语言国际化。</strong>首发支持英语、简体中文和法语三种语言，所有 UI 字符串从第一天起就外部化管理，日期/货币/计量单位自动适配用户所在地区。</p>
+      <p>总体而言，PawFly 是一次完整的<strong>从 0 到 1 产品实践</strong>：从发现真实痛点、定义产品边界、撰写 PRD、设计功能架构到技术原型验证，体现了产品经理在需求洞察、功能规划、优先级决策和跨领域信息整合方面的核心能力。</p>
+    </div>
+  </div>
+
+  <!-- Section 2: 核心亮点 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">02 — 核心亮点</span>
+    <h2>产品设计亮点</h2>
+    <p>项目在 PRD 驱动的产品定义、搜索系统设计、信息架构、智能检查、社区生态和商业化规划六个维度进行了深度实践。</p>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看全部 6 个亮点</div>
+    <div class="highlights-scroll">
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">01</div>
+          <div class="highlight-title">完整的 PRD 驱动产品定义流程</div>
+        </div>
+        <div class="highlight-body">
+          独立撰写了完整的产品需求文档（PRD v1.0），涵盖：问题陈述与动机分析、目标用户画像（国际搬迁用户 Mei / 国内频繁出差用户 Thomas）、产品命名提案与评估、成功指标定义（3 个月 5,000 下载 / 6 个月 20,000 下载）、功能优先级矩阵（Must Have / Should Have）、MVP 范围界定、技术架构选型、数据策略和商业化路径。<br><br>
+          PRD 作为<strong>产品的单一真实来源（Single Source of Truth）</strong>，为设计和开发提供了清晰的决策依据，体现了产品经理"定义产品边界"的核心能力。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">PRD</span>
+          <span class="highlight-tag">用户画像</span>
+          <span class="highlight-tag">MVP 定义</span>
+          <span class="highlight-tag">优先级矩阵</span>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">02</div>
+          <div class="highlight-title">多维度航线搜索与智能过滤系统</div>
+        </div>
+        <div class="highlight-body">
+          设计了深度定制的搜索参数体系：出发地/目的地（支持 IATA 代码）、出发日期（灵活 ±3 天）、宠物数量与类型（犬/猫/鸟/其他）、运输偏好（<strong>仅客舱 / 仅货舱 / 混合 / 不限</strong>）、舱位等级和中转偏好。<br><br>
+          搜索结果按航线全程合规性过滤，确保每一段行程都满足宠物运输条件。显示航空公司、总时长、中转次数、预估价格区间和运输类型，支持按价格/时长/宠物友好度评分/配额排序，并用<strong>徽章标识</strong>区分路线类型（All In-Cabin ✈️ / Cargo Only 📦 / Mixed 🔀）。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">搜索系统</span>
+          <span class="highlight-tag">IATA 代码</span>
+          <span class="highlight-tag">多维过滤</span>
+          <span class="highlight-tag">合规校验</span>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">03</div>
+          <div class="highlight-title">航线详情三层信息架构</div>
+        </div>
+        <div class="highlight-body">
+          航线详情页设计了三层信息结构，覆盖用户决策所需的全部关键数据：<br><br>
+          <strong>第一层 — 航空公司宠物政策</strong>（按航段展示）：允许的宠物类型与品种限制、最大重量、航空箱尺寸要求、各舱位可用性、每航班宠物配额、运输费用（本地货币 + 欧元/人民币换算）、预订方式（在线/电话/机场柜台）。<br><br>
+          <strong>第二层 — 国家入境要求</strong>：出发国出口要求、中转国规定、目的地国进口要求、所需文件清单（健康证明、疫苗记录、狂犬抗体滴度检测等）、隔离要求、官方政府来源链接。<br><br>
+          <strong>第三层 — 配额可用性</strong>：当航空公司 API 提供实时数据时，显示客舱/货舱剩余配额和更新时间；无 API 数据时，显示"请直接联系航空公司确认"的兜底提示。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">信息架构</span>
+          <span class="highlight-tag">政策数据库</span>
+          <span class="highlight-tag">入境要求</span>
+          <span class="highlight-tag">配额查询</span>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">04</div>
+          <div class="highlight-title">宠物档案管理与智能兼容性检查</div>
+        </div>
+        <div class="highlight-body">
+          用户可创建完整的宠物档案：名称、物种、品种（自动补全）、出生日期、体重（可更新）、健康记录、芯片号、照片和疫苗记录（支持 PDF/图片附件）。<br><br>
+          当用户搜索或查看航线时，系统自动将活跃宠物档案与航空公司限制进行比对：<strong>超重预警</strong>（宠物+航空箱超过航司限制）、<strong>品种标记</strong>（品种在航司禁飞名单中）、<strong>物种标记</strong>（航司不接受该宠物类型）、<strong>文件提醒</strong>（目的地所需文件缺失）。将被动查询升级为<strong>主动风险提示</strong>，大幅降低用户遗漏关键信息的风险。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">宠物档案</span>
+          <span class="highlight-tag">智能比对</span>
+          <span class="highlight-tag">风险提示</span>
+          <span class="highlight-tag">文件管理</span>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">05</div>
+          <div class="highlight-title">社区评价体系与数据可持续更新机制</div>
+        </div>
+        <div class="highlight-body">
+          设计了双维度社区评价系统：<strong>航空公司评分</strong>（工作人员态度、登机流程、机上舒适度、政策沟通清晰度）和<strong>目的地评分</strong>（宠物友好住宿、公共交通、公园与户外空间、兽医服务可用性），均采用 5 星制 + 文字评论，评分聚合显示在搜索结果和详情页。<br><br>
+          数据更新采用<strong>"官方策展 + 社区维护"双轮机制</strong>：初期手动收录 Top 50 航空公司政策；用户可标记过期信息或提交修正；后台管理面板审核社区编辑；季度性全量复核 + 实时标记处理。国家入境数据源自官方政府网站（EU TRACES、USDA、中国海关总署等），未来计划接入 IATA TIMATIC API 实现自动化更新。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">社区评价</span>
+          <span class="highlight-tag">UGC</span>
+          <span class="highlight-tag">数据策展</span>
+          <span class="highlight-tag">TIMATIC</span>
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">06</div>
+          <div class="highlight-title">清晰的商业化路径与技术架构规划</div>
+        </div>
+        <div class="highlight-body">
+          商业模式采用<strong>分阶段变现策略</strong>：MVP 阶段以低价付费下载（¥1 / €0.99）验证用户付费意愿；Phase 2 引入航空公司合作伙伴计划（推荐位 + 认证徽章）、宠物品牌原生广告和联盟预订佣金，构建多元收入来源。<br><br>
+          技术架构选型兼顾 MVP 速度和长期扩展性：前端 <strong>React Native + Expo</strong>（当前开发中）→ 未来原生 Swift/Kotlin；航班数据接入 <strong>Amadeus API</strong>；宠物政策数据库基于 <strong>PostgreSQL</strong>；后端 <strong>FastAPI</strong>；认证支持 Apple/Google OAuth；媒体存储 AWS S3；分析工具 Mixpanel。MVP 范围严格聚焦核心搜索和信息展示，将推送通知、实时配额、Android 版本等明确划入 Phase 2。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">商业模式</span>
+          <span class="highlight-tag">Amadeus API</span>
+          <span class="highlight-tag">React Native</span>
+          <span class="highlight-tag">MVP 聚焦</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+   <!-- Section 3: 设计展示 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">03 — 设计展示</span>
+    <h2>界面与交互设计</h2>
+    <p>APP 核心界面原型，使用 React Native + Expo 开发，通过 Expo Go 在移动端实时验证。</p>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>上下滚动查看全部界面（共 14 张）</div>
+    <div class="design-gallery-scroll">
+
+      <!-- 搜索流程 -->
+      <div class="image-gallery grid-2">
+        <div class="gallery-item">
+          <img src="../assets/images/search.png" alt="航线搜索">
+          <div class="gallery-item-caption">航线搜索 / Flight Search — 出发地、目的地与宠物参数</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/search2.png" alt="搜索结果">
+          <div class="gallery-item-caption">搜索结果 / Search Results — 航线列表与过滤</div>
+        </div>
+      </div>
+
+      <!-- 航班详情 -->
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/flights.png" alt="航班信息">
+          <div class="gallery-item-caption">航班详情 / Flight Details — 航线与宠物政策</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/bookOK.png" alt="预订确认">
+          <div class="gallery-item-caption">预订确认 / Booking Confirmed — 操作反馈</div>
+        </div>
+      </div>
+
+      <!-- 探索模块 -->
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/explore.png" alt="探索页面">
+          <div class="gallery-item-caption">探索 / Explore — 热门目的地与推荐</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/explore2.png" alt="探索详情">
+          <div class="gallery-item-caption">探索详情 / Explore Detail — 目的地宠物友好信息</div>
+        </div>
+      </div>
+
+      <!-- 指令与政策 -->
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/command.png" alt="入境要求">
+          <div class="gallery-item-caption">入境要求 / Entry Requirements — 国家宠物政策</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/command2.png" alt="文件清单">
+          <div class="gallery-item-caption">文件清单 / Documents — 健康证明与疫苗记录</div>
+        </div>
+      </div>
+
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/command3.png" alt="航司政策">
+          <div class="gallery-item-caption">航司政策 / Airline Policy — 运输规则与费用</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/command4.png" alt="政策详情">
+          <div class="gallery-item-caption">政策详情 / Policy Detail — 品种限制与箱体要求</div>
+        </div>
+      </div>
+
+      <!-- 宠物档案 -->
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/paw.png" alt="宠物档案">
+          <div class="gallery-item-caption">宠物档案 / Pet Profile — 基本信息管理</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/paw2.png" alt="宠物详情">
+          <div class="gallery-item-caption">宠物详情 / Pet Detail — 健康记录与文件</div>
+        </div>
+      </div>
+
+      <!-- 账户与总览 -->
+      <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+        <div class="gallery-item">
+          <img src="../assets/images/account.png" alt="个人账户">
+          <div class="gallery-item-caption">账户 / Account — 用户设置与个人中心</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Section 4: 项目成果 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">04 — 项目成果与总结</span>
+    <h2>成果与收获</h2>
+    <div class="scroll-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>向下滚动查看完整内容</div>
+    <div class="overview-scroll">
+      <p>项目目前处于<strong>早期开发阶段</strong>，已完成产品定义和部分技术搭建，正在持续推进中。</p>
+
+      <p><strong>已完成的工作</strong>：独立撰写了完整的 PRD v1.0 文档，涵盖问题定义、用户画像（2 个典型 Persona）、12 项功能的优先级矩阵、MVP 与 Phase 2 范围划分、技术架构选型和商业化路线图；完成了 PostgreSQL 数据库的搭建；使用 React Native + Expo 搭建了项目框架并开发了部分核心页面原型，通过 Expo Go 在移动端进行实时验证。</p>
+
+      <p><strong>正在推进的工作</strong>：航班数据源方案调研（评估 Amadeus API 接入成本与覆盖范围，同时调研网站数据抓取作为补充方案的可行性）；核心页面的交互逻辑实现与 UI 细节打磨；宠物政策数据的初期录入与结构化整理。</p>
+
+      <p><strong>产品思维收获方面</strong>，这个项目让我实践了产品经理的核心工作方法：从真实痛点出发定义产品而非从技术出发；通过用户画像和场景分析驱动功能设计；用优先级矩阵在"想做的"和"该做的"之间做取舍；在产品早期就思考数据获取的可行路径和长期更新机制。</p>
+
+      <p>PawFly 是一个持续进行中的个人项目，目标是通过完整走一遍<strong>发现问题 → 定义产品 → 规划路径 → 推动落地</strong>的全流程，积累真实的从 0 到 1 产品经验。</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- Footer Navigation -->
+<footer class="project-footer">
+  <div class="footer-nav">
+    <a href="../index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      返回主页
+    </a>
+  </div>
+  <div class="footer-nav">
+    <a href="../index.html#projects">
+      查看所有项目
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能工单管理平台 — 姜亭汀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-deep: #1a3a2a;
+  --green-dark: #2d5a3f;
+  --green-mid: #3d8b5e;
+  --green-light: #52b788;
+  --green-glow: #74e8a8;
+  --green-pale: #b7e4c7;
+  --blue-deep: #0d1b2a;
+  --blue-dark: #1b2d4f;
+  --blue-mid: #2a5d8f;
+  --blue-light: #4da8da;
+  --blue-glow: #7dd3fc;
+  --blue-pale: #a8dadc;
+  --bg-primary: #0a1a12;
+  --bg-card: rgba(20, 45, 30, 0.6);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --text-primary: #e8f5ee;
+  --text-secondary: #9bbfaa;
+  --text-muted: #5a7f6a;
+  --accent: #52b788;
+  --accent-blue: #4da8da;
+  --border: rgba(82, 183, 136, 0.15);
+  --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ===== Back Navigation ===== */
+.back-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 26, 18, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  animation: backNavIn 0.5s ease-out;
+}
+
+@keyframes backNavIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: color 0.3s, transform 0.25s ease;
+}
+
+.back-link:hover {
+  color: var(--green-light);
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.back-link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+}
+
+.back-nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.back-nav-logo span {
+  color: var(--green-light);
+}
+
+/* ===== Project switcher (jump to other projects) ===== */
+.project-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.project-switcher-label {
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.project-switcher a {
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.25s, background 0.25s;
+}
+
+.project-switcher a:hover {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.1);
+}
+
+.project-switcher a.active {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.15);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ===== Project Hero ===== */
+.project-hero {
+  padding: 8rem 3rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.project-hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--green-light);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.project-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(135deg, var(--text-primary), var(--green-pale));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.project-hero-en {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.project-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.project-meta-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.project-meta-value {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.project-hero-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.detail-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.detail-tech-tag {
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  background: rgba(82, 183, 136, 0.1);
+  color: var(--green-light);
+  border: 1px solid rgba(82, 183, 136, 0.2);
+}
+
+/* ===== Content Area ===== */
+.project-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 3rem 6rem;
+}
+
+/* Section block */
+.content-section {
+  margin-bottom: 4rem;
+}
+
+.content-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--green-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.content-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.content-section p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  max-width: 750px;
+}
+
+/* Image gallery grid */
+.image-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.image-gallery.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 界面与交互设计：可上下滚动的展示区 */
+.design-gallery-scroll {
+  max-height: 72vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.design-gallery-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.design-gallery-scroll::-webkit-scrollbar-track {
+  background: var(--bg-glass);
+  border-radius: 3px;
+}
+.design-gallery-scroll::-webkit-scrollbar-thumb {
+  background: var(--green-dark);
+  border-radius: 3px;
+}
+.design-gallery-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--green-mid);
+}
+
+.gallery-item {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(82, 183, 136, 0.08);
+}
+
+.gallery-item img {
+  width: 100%;
+  display: block;
+}
+
+.gallery-item-caption {
+  padding: 1rem 1.2rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--border);
+}
+
+/* Placeholder for images not yet uploaded */
+.image-placeholder {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(20, 45, 30, 0.4), rgba(13, 27, 42, 0.4));
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+}
+
+/* Key highlights / features — scrollable vertical list */
+.highlights-scroll {
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.highlights-scroll::-webkit-scrollbar { width: 6px; }
+.highlights-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.8rem;
+  opacity: 0.7;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+.scroll-hint svg { width: 14px; height: 14px; }
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.highlight-card {
+  padding: 2rem 2rem 2rem 2.5rem;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 1.2rem;
+  position: relative;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+}
+.highlight-card:last-child { margin-bottom: 0; }
+
+.highlight-card:hover {
+  border-color: var(--green-mid);
+  box-shadow: 0 6px 36px rgba(82, 183, 136, 0.08);
+  transform: translateX(4px);
+}
+
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--green-light), var(--blue-light));
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.highlight-card:hover::before { opacity: 1; }
+
+.highlight-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.highlight-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(82, 183, 136, 0.15), rgba(77, 168, 218, 0.1));
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--green-light);
+  flex-shrink: 0;
+}
+
+.highlight-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.highlight-body {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+
+.highlight-body strong {
+  color: var(--green-pale);
+  font-weight: 500;
+}
+
+.highlight-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.highlight-tag {
+  padding: 0.2rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  background: rgba(82, 183, 136, 0.08);
+  color: var(--green-light);
+  border: 1px solid rgba(82, 183, 136, 0.12);
+  letter-spacing: 0.03em;
+}
+
+/* ===== Footer ===== */
+.project-footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-nav a:hover {
+  color: var(--green-light);
+}
+
+.footer-nav a svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .back-nav { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+  .project-switcher { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .project-switcher-label { display: none; }
+  .project-hero { padding: 6rem 1.5rem 3rem; }
+  .project-content { padding: 0 1.5rem 4rem; }
+  .project-hero h1 { font-size: 2rem; }
+  .project-hero-meta { flex-direction: column; gap: 1rem; }
+  .feature-list { grid-template-columns: 1fr; }
+  .image-gallery.grid-2 { grid-template-columns: 1fr; }
+  .project-footer { flex-direction: column; gap: 1.5rem; padding: 2rem 1.5rem; }
+}
+
+/* ===== Scroll reveal animation ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 项目概述：可滚动文字区 */
+.overview-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  scroll-behavior: smooth;
+}
+.overview-scroll::-webkit-scrollbar { width: 6px; }
+.overview-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.overview-scroll p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+  max-width: 780px;
+  text-align: justify;
+}
+
+.overview-scroll p strong {
+  color: var(--green-pale);
+  font-weight: 500;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="back-nav">
+  <a href="../index.html" class="back-link" title="返回主页面">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    返回主页
+  </a>
+  <div class="project-switcher">
+    <span class="project-switcher-label">项目</span>
+    <a href="project-pawfly.html">PawFly</a>
+    <a href="project-monopoly.html">大富翁</a>
+    <a href="project-ticket.html" class="active">工单</a>
+    <a href="project-portfolio.html">餐厅</a>
+  </div>
+  <a href="../index.html" class="back-nav-logo">JTT<span>.</span>Garden</a>
+</nav>
+
+<!-- Project Hero -->
+<header class="project-hero">
+  <div class="project-hero-label reveal">PROJECT 03</div>
+  <h1 class="reveal">智能工单管理平台</h1>
+  <p class="project-hero-en reveal">Smart Ticket Management Platform UX</p>
+  
+  <div class="project-hero-meta reveal">
+    <div class="project-meta-item">
+      <span class="project-meta-label">角色</span>
+      <span class="project-meta-value">UX 设计师 — 产品流程设计 / 交互原型</span>
+    </div>
+  </div>
+
+  <p class="project-hero-desc reveal">设计 B 端智能工单管理系统的核心产品流程，涵盖工单创建、任务分配、处理跟踪及数据看板等功能模块。通过用户访谈与需求分析优化信息架构。</p>
+  
+  <div class="detail-tech-tags reveal">
+    <span class="detail-tech-tag">Figma</span><span class="detail-tech-tag">Axure</span><span class="detail-tech-tag">用户研究</span>
+  </div>
+</header>
+
+<!-- Content Area -->
+<main class="project-content">
+
+
+<!-- Section 1: 项目概述 -->
+<div class="content-section reveal">
+  <span class="content-section-label">01 — 项目概述</span>
+  <h2>项目背景与目标</h2>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    向下滚动查看完整内容
+  </div>
+
+  <div class="overview-scroll">
+    <p>随着企业服务场景不断扩大，客户咨询、故障申报、内部支持、售后处理等需求持续增长，传统依赖人工分发、线下登记或多系统协同的工单处理方式，逐渐暴露出响应慢、流转不清晰、优先级判断困难、进度不可追踪、数据沉淀不足等问题。尤其在客服、运维、IT支持和综合服务管理场景中，工单数量增加后，团队常常面临工单积压、跨部门协作低效、服务质量难量化、客户满意度难提升等挑战。</p>
+
+    <p>基于这一背景，本项目拟建设一套<strong>智能工单管理平台</strong>，围绕"提交—分派—处理—沟通—跟踪—关闭—分析"全流程进行数字化整合，打造统一、高效、可视化的服务支持体系。平台通过整合工单管理、消息协同、人员管理、日历排期、数据监控等核心模块，实现业务流程标准化、服务过程透明化和管理决策数据化，帮助组织提升整体服务效率与运营能力。</p>
+
+    <p><strong>第一，提升工单处理效率。</strong>通过统一入口提交工单、标准化字段录入、状态流转管理和优先级划分，减少人工分拣和重复沟通成本，提高响应速度与处理效率。</p>
+
+    <p><strong>第二，强化过程跟踪与协同能力。</strong>让工单从创建到关闭的每一步都可视、可追踪，支持处理人员与客户围绕工单进行持续沟通，降低信息遗漏和协作断层风险。</p>
+
+    <p><strong>第三，建立可量化的服务管理机制。</strong>通过对工单数量、解决率、响应时长、逾期情况、客户反馈等关键指标进行可视化统计，帮助管理者实时掌握运营状态，并为绩效考核和资源调度提供依据。</p>
+
+    <p><strong>第四，优化资源配置与团队管理。</strong>结合人员管理、角色配置和日历排班能力，实现任务合理分配、团队分工清晰、服务资源利用更高效。</p>
+
+    <p><strong>第五，提升客户体验与服务质量。</strong>借助更快的响应、更清晰的处理进度、更规范的反馈机制和更稳定的服务流程，持续提升用户满意度与平台服务价值。</p>
+
+    <p>总体而言，本项目旨在构建一个集<strong>业务处理、协同沟通、流程跟踪和运营分析</strong>于一体的智能化工单管理平台，推动传统工单处理模式向更加高效、规范、透明和数据驱动的方向升级。</p>
+  </div>
+</div>
+
+ <!-- Section 2: 核心亮点 -->
+ <div class="content-section reveal">
+  <span class="content-section-label">02 — 核心亮点</span>
+  <h2>产品设计亮点</h2>
+  <p>平台在工单全流程管理、可视化运营、优先级调度、沟通协同、人员组织和日历排班六大维度进行了深度设计。</p>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    向下滚动查看全部 6 个亮点
+  </div>
+
+  <div class="highlights-scroll">
+
+    <!-- Highlight 1 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">01</div>
+        <div class="highlight-title">全流程闭环管理</div>
+      </div>
+      <div class="highlight-body">
+        平台覆盖了工单处理的完整链路：从 <strong>Submit Ticket</strong>（提交工单）、<strong>Ticket Management</strong>（工单管理）、<strong>Inbox</strong>（消息沟通）到 <strong>Track Tickets</strong>（工单跟踪），形成了一个闭环。<br><br>
+        这意味着它不只是"收单系统"，而是把<strong>受理、分派、沟通、跟进、关闭</strong>都放在同一个平台里，减少了系统切换和信息断层。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">Submit Ticket</span>
+        <span class="highlight-tag">Ticket Management</span>
+        <span class="highlight-tag">Inbox</span>
+        <span class="highlight-tag">Track Tickets</span>
+      </div>
+    </div>
+
+    <!-- Highlight 2 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">02</div>
+        <div class="highlight-title">可视化运营看板，便于管理决策</div>
+      </div>
+      <div class="highlight-body">
+        在 <strong>System Monitoring</strong> 页面中，涵盖了总工单数、已解决工单数、客户表扬率、今日未处理/逾期/进行中/已完成/无法解决等关键指标，以及响应时间、解决时间、类别分布等可视化图表。<br><br>
+        不仅让一线人员处理工单，也让管理者快速掌握<strong>服务效率、积压情况、客户满意度和问题类型趋势</strong>，非常适合做运营监控和绩效分析。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">数据看板</span>
+        <span class="highlight-tag">KPI 监控</span>
+        <span class="highlight-tag">趋势分析</span>
+      </div>
+    </div>
+
+    <!-- Highlight 3 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">03</div>
+        <div class="highlight-title">工单优先级与状态管理清晰</div>
+      </div>
+      <div class="highlight-body">
+        在工单列表和详情页里，清晰呈现了状态分类（<strong>New / On-Going / Resolved</strong>）、优先级标识（<strong>High Priority</strong>）、SLA 时限提醒（如 "Respond in 2h""Overdue by 3 days"）以及处理状态（<strong>Open / In Progress</strong>）。<br><br>
+        帮助团队做到：先处理高优先级问题、避免超时工单被忽视、让处理节奏更可控、对<strong>服务承诺（SLA）进行明确约束</strong>。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">优先级调度</span>
+        <span class="highlight-tag">SLA 管理</span>
+        <span class="highlight-tag">状态流转</span>
+      </div>
+    </div>
+
+    <!-- Highlight 4 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">04</div>
+        <div class="highlight-title">沟通协同能力强 — 工单即会话</div>
+      </div>
+      <div class="highlight-body">
+        在 <strong>Inbox message response</strong> 和 <strong>Track tickets Details</strong> 页面中，可以看到工单消息往来记录、回复输入框、用户反馈展示以及处理人员与客户之间的持续沟通痕迹。<br><br>
+        平台具备较强的<strong>工单会话化能力</strong>。相比传统只记录状态变更的系统，这种设计更适合客服、技术支持、售后场景，处理人员可以围绕工单直接沟通、追问、补充材料、同步进展。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">消息驱动</span>
+        <span class="highlight-tag">实时协同</span>
+        <span class="highlight-tag">会话式工单</span>
+      </div>
+    </div>
+
+    <!-- Highlight 5 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">05</div>
+        <div class="highlight-title">人员管理与组织协同一体化</div>
+      </div>
+      <div class="highlight-body">
+        在 <strong>People Management / Add a New Staff</strong> 页面中，支持添加员工基础信息、设置角色/部门/工号/官方邮箱、上传头像等。<br><br>
+        平台不仅管理"工单"，还在管理"处理工单的人"，可以进一步支撑<strong>按部门分派、按角色授权、按员工追踪绩效</strong>，构建客服/运维/技术支持的协同体系。这是一个更偏<strong>组织化服务管理平台</strong>，而不是单一的工单收集工具。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">角色权限</span>
+        <span class="highlight-tag">部门分派</span>
+        <span class="highlight-tag">绩效追踪</span>
+      </div>
+    </div>
+
+    <!-- Highlight 6 -->
+    <div class="highlight-card">
+      <div class="highlight-header">
+        <div class="highlight-num">06</div>
+        <div class="highlight-title">日历排班与任务视图增强执行力</div>
+      </div>
+      <div class="highlight-body">
+        在 <strong>Calendar</strong> 页面中，支持周/月/年视图切换、按时间段排布任务、不同事项以色块方式展示，以及搜索与时间定位功能。<br><br>
+        把工单处理从"列表管理"延伸到了"<strong>时间管理</strong>"。对于支持团队来说，非常适合安排跟进任务、做值班/排班管理、处理预约型服务、跟踪工单执行节点。相比只看列表，日历视图更适合处理<strong>时间敏感型服务工单</strong>。
+      </div>
+      <div class="highlight-tags">
+        <span class="highlight-tag">日历视图</span>
+        <span class="highlight-tag">排班管理</span>
+        <span class="highlight-tag">时间管理</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <!-- Section 3: 设计展示 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">03 — 设计展示</span>
+    <h2>界面与交互设计</h2>
+    <p>智能工单管理平台核心界面：登录、工单列表、日历、人员管理、收件箱与工单详情等。</p>
+    
+    <div class="design-gallery-scroll">
+      <div class="image-gallery grid-2">
+        <div class="gallery-item">
+          <img src="../assets/images/sign-in.png" alt="登录界面 — du TICKET">
+          <div class="gallery-item-caption">登录 / Sign in</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/Ticket Management.png" alt="工单管理 — 列表与筛选">
+          <div class="gallery-item-caption">工单管理 / Tickets</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/Calendar Week.png" alt="日历周视图">
+          <div class="gallery-item-caption">日历周视图 / Calendar Week</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/Create User.png" alt="添加员工表单">
+          <div class="gallery-item-caption">人员管理 — 添加员工 / Add Staff</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/Inbox message response.png" alt="收件箱与消息回复">
+          <div class="gallery-item-caption">收件箱 / Inbox & Response</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/Track tickets Details(feedback).png" alt="工单详情与反馈">
+          <div class="gallery-item-caption">工单详情与反馈 / Ticket Details</div>
+        </div>
+        <div class="gallery-item">
+          <img src="../assets/images/system monitoring.png" alt="系统监控看板">
+          <div class="gallery-item-caption">系统监控 / System Monitoring</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Section 4: 项目成果 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">04 — 项目成果与总结</span>
+    <h2>成果与收获</h2>
+    <p>本项目完成了智能工单管理平台的整体设计与核心功能实现，初步构建了涵盖工单提交、分类管理、进度跟踪、消息沟通、人员管理、日历排期和数据监控的一体化服务支持平台。通过本次项目，不仅提升了对工单流程标准化、系统可视化和团队协同管理的理解，也积累了面向实际业务场景进行平台设计与优化的经验，为后续系统完善与落地应用奠定了基础。</p>
+  </div>
+
+</main>
+
+<!-- Footer Navigation -->
+<footer class="project-footer">
+  <div class="footer-nav">
+    <a href="../index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      返回主页
+    </a>
+  </div>
+  <div class="footer-nav">
+    <a href="../index.html#projects">
+      查看所有项目
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

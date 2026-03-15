@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多平台游戏原型 — 大富翁 — 姜亭汀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-deep: #1a3a2a;
+  --green-dark: #2d5a3f;
+  --green-mid: #3d8b5e;
+  --green-light: #52b788;
+  --green-glow: #74e8a8;
+  --green-pale: #b7e4c7;
+  --blue-deep: #0d1b2a;
+  --blue-dark: #1b2d4f;
+  --blue-mid: #2a5d8f;
+  --blue-light: #4da8da;
+  --blue-glow: #7dd3fc;
+  --blue-pale: #a8dadc;
+  --bg-primary: #0a1a12;
+  --bg-card: rgba(20, 45, 30, 0.6);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --text-primary: #e8f5ee;
+  --text-secondary: #9bbfaa;
+  --text-muted: #5a7f6a;
+  --accent: #52b788;
+  --accent-blue: #4da8da;
+  --border: rgba(82, 183, 136, 0.15);
+  --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ===== Back Navigation ===== */
+.back-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 26, 18, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  animation: backNavIn 0.5s ease-out;
+}
+
+@keyframes backNavIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: color 0.3s, transform 0.25s ease;
+}
+
+.back-link:hover {
+  color: var(--green-light);
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+.back-link svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+}
+
+.back-nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.back-nav-logo span {
+  color: var(--green-light);
+}
+
+/* ===== Project switcher (jump to other projects) ===== */
+.project-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.project-switcher-label {
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.project-switcher a {
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.25s, background 0.25s;
+}
+
+.project-switcher a:hover {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.1);
+}
+
+.project-switcher a.active {
+  color: var(--green-light);
+  background: rgba(82, 183, 136, 0.15);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ===== Project Hero ===== */
+.project-hero {
+  padding: 8rem 3rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.project-hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--green-light);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.project-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(135deg, var(--text-primary), var(--green-pale));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.project-hero-en {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.project-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.project-meta-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.project-meta-value {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.project-hero-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.detail-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.detail-tech-tag {
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  background: rgba(82, 183, 136, 0.1);
+  color: var(--green-light);
+  border: 1px solid rgba(82, 183, 136, 0.2);
+}
+
+/* ===== Content Area ===== */
+.project-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 3rem 6rem;
+}
+
+/* Section block */
+.content-section {
+  margin-bottom: 4rem;
+}
+
+.content-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--green-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.content-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.content-section p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  max-width: 750px;
+}
+
+/* Image gallery grid */
+.image-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.image-gallery.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.gallery-item {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(82, 183, 136, 0.08);
+}
+
+.gallery-item img {
+  width: 100%;
+  display: block;
+}
+
+.gallery-item-caption {
+  padding: 1rem 1.2rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--border);
+}
+
+/* Placeholder for images not yet uploaded */
+.image-placeholder {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(20, 45, 30, 0.4), rgba(13, 27, 42, 0.4));
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+}
+
+/* Key highlights / features list */
+.feature-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--green-mid);
+}
+
+.feature-card-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.feature-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== Footer ===== */
+.project-footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-nav a:hover {
+  color: var(--green-light);
+}
+
+.footer-nav a svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .back-nav { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+  .project-switcher { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .project-switcher-label { display: none; }
+  .project-hero { padding: 6rem 1.5rem 3rem; }
+  .project-content { padding: 0 1.5rem 4rem; }
+  .project-hero h1 { font-size: 2rem; }
+  .project-hero-meta { flex-direction: column; gap: 1rem; }
+  .feature-list { grid-template-columns: 1fr; }
+  .image-gallery.grid-2 { grid-template-columns: 1fr; }
+  .project-footer { flex-direction: column; gap: 1.5rem; padding: 2rem 1.5rem; }
+}
+
+/* ===== Scroll reveal animation ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 项目概述：可滚动文字区 */
+.overview-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  scroll-behavior: smooth;
+}
+.overview-scroll::-webkit-scrollbar { width: 6px; }
+.overview-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.overview-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.overview-scroll p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.9;
+  margin-bottom: 1.2rem;
+  max-width: 780px;
+  text-align: justify;
+}
+
+.overview-scroll p strong {
+  color: var(--green-pale);
+  font-weight: 500;
+}
+
+/* Key highlights / features — scrollable vertical list */
+.highlights-scroll {
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.highlights-scroll::-webkit-scrollbar { width: 6px; }
+.highlights-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.highlights-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.8rem;
+  opacity: 0.7;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+.scroll-hint svg { width: 14px; height: 14px; }
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.highlight-card {
+  padding: 2rem 2rem 2rem 2.5rem;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 1.2rem;
+  position: relative;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+}
+.highlight-card:last-child { margin-bottom: 0; }
+
+.highlight-card:hover {
+  border-color: var(--green-mid);
+  box-shadow: 0 6px 36px rgba(82, 183, 136, 0.08);
+  transform: translateX(4px);
+}
+
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--green-light), var(--blue-light));
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.highlight-card:hover::before { opacity: 1; }
+
+.highlight-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.highlight-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(82, 183, 136, 0.15), rgba(77, 168, 218, 0.1));
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--green-light);
+  flex-shrink: 0;
+}
+
+.highlight-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.highlight-body {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+
+.highlight-body strong {
+  color: var(--green-pale);
+  font-weight: 500;
+}
+
+.highlight-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.highlight-tag {
+  padding: 0.2rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  background: rgba(82, 183, 136, 0.08);
+  color: var(--green-light);
+  border: 1px solid rgba(82, 183, 136, 0.12);
+  letter-spacing: 0.03em;
+}
+
+/* Gantt chart: tall vertical scroll */
+.gantt-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.gantt-scroll::-webkit-scrollbar { width: 6px; }
+.gantt-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.gantt-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.gantt-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.gantt-scroll .gallery-item {
+  margin-bottom: 1.5rem;
+}
+.gantt-scroll .gallery-item:last-child {
+  margin-bottom: 0;
+}
+.gantt-scroll .gallery-item img {
+  width: 100%;
+  display: block;
+  background: #fff;
+}
+
+/* Trello: horizontal scroll */
+.trello-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.trello-scroll::-webkit-scrollbar { height: 6px; }
+.trello-scroll::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 3px; }
+.trello-scroll::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+.trello-scroll::-webkit-scrollbar-thumb:hover { background: var(--green-mid); }
+
+.trello-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+}
+
+.trello-track .gallery-item {
+  flex-shrink: 0;
+  width: 720px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trello-track .gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(82, 183, 136, 0.08);
+}
+
+.trello-track .gallery-item img {
+  width: 100%;
+  display: block;
+}
+
+/* Scroll direction hints */
+.scroll-hint-h {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.8rem;
+  opacity: 0.7;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+.scroll-hint-h svg { width: 14px; height: 14px; }
+
+/* Sub-section title inside content-section */
+.sub-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--accent-blue);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 3rem;
+  margin-bottom: 0.3rem;
+  padding-left: 0.8rem;
+  border-left: 3px solid var(--accent-blue);
+}
+
+.sub-section-title:first-of-type {
+  margin-top: 1.5rem;
+}
+
+/* 界面与交互设计：可上下滚动的展示区 */
+.design-gallery-scroll {
+  max-height: 72vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  margin-top: 1.5rem;
+  scroll-behavior: smooth;
+}
+.design-gallery-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.design-gallery-scroll::-webkit-scrollbar-track {
+  background: var(--bg-glass);
+  border-radius: 3px;
+}
+.design-gallery-scroll::-webkit-scrollbar-thumb {
+  background: var(--green-dark);
+  border-radius: 3px;
+}
+.design-gallery-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--green-mid);
+}
+
+/* Section 06: Links & Documents */
+.links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.link-card:hover {
+  border-color: var(--green-mid);
+  box-shadow: 0 6px 30px rgba(82, 183, 136, 0.1);
+  transform: translateY(-2px);
+}
+
+.link-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+
+.link-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.link-card-title {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.link-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.link-card-arrow {
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: color 0.3s, transform 0.3s;
+  flex-shrink: 0;
+}
+
+.link-card:hover .link-card-arrow {
+  color: var(--green-light);
+  transform: translateX(3px);
+}
+
+.link-card-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.doc-card .link-card-icon {
+  background: linear-gradient(135deg, rgba(77, 168, 218, 0.15), rgba(82, 183, 136, 0.1));
+}
+
+.ext-card .link-card-icon {
+  background: linear-gradient(135deg, rgba(82, 183, 136, 0.15), rgba(116, 232, 168, 0.1));
+}
+
+@media (max-width: 768px) {
+  .links-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="back-nav">
+  <a href="../index.html" class="back-link" title="返回主页面">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    返回主页
+  </a>
+  <div class="project-switcher">
+    <span class="project-switcher-label">项目</span>
+    <a href="project-pawfly.html">PawFly</a>
+    <a href="project-monopoly.html" class="active">大富翁</a>
+    <a href="project-ticket.html">工单</a>
+    <a href="project-portfolio.html">餐厅</a>
+  </div>
+  <a href="../index.html" class="back-nav-logo">JTT<span>.</span>Garden</a>
+</nav>
+
+<!-- Project Hero -->
+<header class="project-hero">
+  <div class="project-hero-label reveal">PROJECT 02</div>
+  <h1 class="reveal">多平台游戏原型 — 大富翁</h1>
+  <p class="project-hero-en reveal">Multi-platform Monopoly Game Prototype</p>
+  
+  <div class="project-hero-meta reveal">
+    <div class="project-meta-item">
+      <span class="project-meta-label">角色</span>
+      <span class="project-meta-value">产品规划 / 交互设计 / 技术原型开发 / 前端实现</span>
+    </div>
+  </div>
+
+  <p class="project-hero-desc reveal">参与多人在线游戏产品从 0→1 设计到原型交付的完整流程。负责需求分析与功能规划，撰写 PRD 并梳理核心用户流程；使用 Figma 构建高保真交互原型并建立设计系统；在 Godot 引擎中使用 GDScript 完成全部界面的技术实现，涵盖页面搭建、响应式适配、动画开发、交互逻辑编写及与后端的联调集成。兼具产品思维、设计能力与工程落地能力。</p>
+  
+  <div class="detail-tech-tags reveal">
+    <span class="detail-tech-tag">Figma</span><span class="detail-tech-tag">Godot</span><span class="detail-tech-tag">GDScript</span><span class="detail-tech-tag">产品思维</span>
+  </div>
+</header>
+
+<!-- Content Area -->
+<main class="project-content">
+
+  <!-- Section 1: 项目概述 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">01 — 项目概述</span>
+    <h2>项目背景与目标</h2>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      向下滚动查看完整内容
+    </div>
+
+    <div class="overview-scroll">
+      <p>在多人在线游戏市场中，桌游类产品因其社交属性和策略深度始终保持着稳定的用户需求。本项目以经典桌游 <strong>Monopoly（大富翁）</strong> 为灵感，打造了一款名为 <strong>"Vacashon"</strong> 的环球旅行主题多人在线棋盘游戏，支持 2–4 名玩家同时在线对局。玩家以世界各国城市为地产，通过掷骰子移动、购买地产、建造房屋、收取租金，目标是成为最后一个未破产的玩家，或在计时结束时拥有最高总资产。</p>
+
+      <p>项目由 8 人团队协作完成，开发周期约三个月，涵盖需求分析、技术选型、原型设计、功能开发、服务器部署、调试集成和最终交付等完整阶段。团队采用分组协作模式：游戏机制开发组（3 人）、服务器与网络组（2 人）、<strong>产品与交互设计组（2 人，本人所在组）</strong>、以及项目经理（1 人），各组并行推进并在关键节点进行联合集成。本人在项目中<strong>兼具产品、设计与技术三重角色</strong>，独立完成了从 Figma 原型设计到 Godot 引擎代码实现的全链路工作。</p>
+
+      <p>项目的核心目标包括以下几个方面：</p>
+
+      <p><strong>第一，实现完整的多人在线游戏体验。</strong>基于客户端-服务器架构，通过 WebSocket 实现实时通信，支持多平台（桌面端、移动端、Web 端）玩家同时在线对局，服务器集中管理所有游戏逻辑以确保状态同步和公平性。</p>
+
+      <p><strong>第二，构建标准化的游戏机制系统。</strong>完整还原大富翁核心玩法——掷骰子移动、购买地产、建造房屋/酒店、收取租金、事件卡牌（Lucky Suitcase / Mystery Passport）、海关（监狱）机制、破产判定，并加入计时赛制和总资产排名等创新规则。</p>
+
+      <p><strong>第三，打造高质量的用户界面与交互体验。</strong>以 Figma 完成从低保真线框到高保真交互原型的三阶段迭代，再迁移至 Godot 引擎用 GDScript 实现全部界面功能，确保设计与游戏机制无缝衔接，同时适配多种屏幕尺寸。</p>
+
+      <p><strong>第四，建立可靠的后端基础设施。</strong>使用 Python + FastAPI 搭建后端，PostgreSQL 管理动态数据，JSON 管理静态配置，Docker 容器化部署，Let's Encrypt SSL 加密通信，并配置自定义域名和专属邮件服务器支持账户注册与密码找回。</p>
+
+      <p><strong>第五，以真实产品标准驱动团队协作。</strong>通过 Gantt 图规划 125+ 任务、Trello 看板跟踪进度、Git 版本控制、Discord 沟通协作，模拟真实产品团队的工作模式，从需求到交付走完产品全生命周期。</p>
+
+      <p>总体而言，本项目以一款完整的多人在线游戏产品为载体，贯穿了产品规划、交互设计、前端开发、后端架构和项目管理的全链路实践，是技术能力与产品思维的综合体现。</p>
+    </div>
+  </div>
+
+  <!-- Section 2: 核心功能 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">02 — 核心亮点</span>
+    <h2>产品设计与功能亮点</h2>
+    <p>项目在游戏机制、实时通信架构、UI/UX 设计流程、数据管理、跨平台部署和团队协作六大维度进行了深度实践。</p>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      向下滚动查看全部 6 个亮点
+    </div>
+
+    <div class="highlights-scroll">
+
+      <!-- Highlight 1 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">01</div>
+          <div class="highlight-title">完整还原经典大富翁核心玩法并融入创新机制</div>
+        </div>
+        <div class="highlight-body">
+          游戏忠实还原了 Monopoly 的核心规则体系：掷骰子移动、购买城市地产、建造房屋提升租金、事件卡牌触发（<strong>Lucky Suitcase</strong> 和 <strong>Mystery Passport</strong> 两套牌组）、海关关押与释放机制、以及破产判定。<br><br>
+          在此基础上，项目融入了多项创新设计：以<strong>环球旅行</strong>为主题，棋盘城市来自团队 8 名成员的母国；引入<strong>计时赛制</strong>，时间到后按总资产排名决胜；机场格子支持快速传送至下一个机场；所有游戏逻辑由服务器集中处理，客户端仅发送指令（如 <code>{"action": "roll_dice"}</code>），确保多人对局的公平性和一致性。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">Monopoly 玩法</span>
+          <span class="highlight-tag">事件卡牌</span>
+          <span class="highlight-tag">计时赛制</span>
+          <span class="highlight-tag">服务器权威</span>
+        </div>
+      </div>
+
+      <!-- Highlight 2 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">02</div>
+          <div class="highlight-title">客户端-服务器实时通信架构，支持跨平台多人在线</div>
+        </div>
+        <div class="highlight-body">
+          项目采用 <strong>Python + FastAPI</strong> 构建后端服务，结合两种通信协议：<strong>HTTP REST API</strong> 用于用户认证、资源加载等无状态请求；<strong>WebSocket</strong> 用于游戏内实时通信（移动、状态更新、回合切换），实现全双工低延迟交互。<br><br>
+          后端架构清晰分层：<strong>GameHandler</strong> 处理 WebSocket 事件 → <strong>GameManager</strong> 验证回合权限并分发逻辑 → <strong>GameLogic</strong> 封装所有游戏规则 → 状态通过 <strong>Pydantic</strong> 序列化后广播给所有客户端。整套架构支持多房间并发运行，玩家可创建公开或私密房间，2–4 人同时在线对局。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">FastAPI</span>
+          <span class="highlight-tag">WebSocket</span>
+          <span class="highlight-tag">REST API</span>
+          <span class="highlight-tag">Pydantic</span>
+          <span class="highlight-tag">多房间并发</span>
+        </div>
+      </div>
+
+      <!-- Highlight 3 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">03</div>
+          <div class="highlight-title">从 Figma 到 Godot 的完整 UI/UX 设计与实现流程</div>
+        </div>
+        <div class="highlight-body">
+          HCI 团队（本人所在组）采用 Figma 进行<strong>三阶段原型迭代</strong>：低保真线框 → 中保真布局 → 高保真交互原型，利用 Smart Animate 模拟骰子滚动、事件卡弹窗等关键微交互，并通过 Master Components 建立统一设计系统确保全局视觉一致性。<br><br>
+          设计定稿后迁移至 <strong>Godot 引擎</strong>实现：每个界面作为独立 Scene 开发（模块化场景架构）；使用 Control / VBoxContainer / HBoxContainer 等节点实现响应式布局适配不同屏幕；弹窗交互通过独立 Scene 管理；所有动画和过渡效果均通过 <strong>GDScript + AnimationPlayer</strong> 在引擎内原生实现，无需外部工具。整个流程从零学习 Figma，独立完成了页面布局、视觉设计、配色方案、Logo 初稿、交互动效等全部 UI 工作。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">Figma 原型</span>
+          <span class="highlight-tag">三阶段迭代</span>
+          <span class="highlight-tag">Godot 实现</span>
+          <span class="highlight-tag">响应式布局</span>
+          <span class="highlight-tag">GDScript 动画</span>
+        </div>
+      </div>
+
+      <!-- Highlight 4 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">04</div>
+          <div class="highlight-title">静态配置与动态数据分离的数据管理策略</div>
+        </div>
+        <div class="highlight-body">
+          团队在数据管理上进行了充分的技术选型：先后构建了 <strong>FastAPI + SQLite</strong> 和 <strong>PostgreSQL</strong> 两套原型进行性能对比，最终选择 PostgreSQL 作为主数据库，因其支持对象存储、功能强大且安全可靠。<br><br>
+          数据架构采用<strong>静态与动态分离</strong>策略：棋盘格子定义（PropertyCell、StreetCell、RailwaysCell 等）作为静态配置存储在 <strong>JSON 文件</strong>中，启动时加载；玩家账户、房间信息等动态数据存储在 <strong>PostgreSQL 数据库</strong>中，通过 <strong>SQLAlchemy ORM</strong> 操作。<strong>Pydantic</strong> 用于定义数据验证模式，保障前后端通信的数据结构和内容安全。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">PostgreSQL</span>
+          <span class="highlight-tag">SQLAlchemy</span>
+          <span class="highlight-tag">JSON 配置</span>
+          <span class="highlight-tag">数据验证</span>
+        </div>
+      </div>
+
+      <!-- Highlight 5 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">05</div>
+          <div class="highlight-title">容器化部署与完整的安全认证体系</div>
+        </div>
+        <div class="highlight-body">
+          项目基础设施完善：后端服务、Web 服务器和邮件服务器均通过 <strong>Docker</strong> 容器化部署；<strong>Nginx</strong> 托管游戏 Web 版本；<strong>Apache</strong> 作为反向代理路由 HTTPS 和 WebSocket 流量；<strong>Let's Encrypt SSL</strong> 证书加密所有通信；自定义域名 <strong>vacashon.online</strong> 配合 <strong>Poste.io</strong> 邮件服务器支持注册确认和密码重置邮件。<br><br>
+          认证系统方面，实现了完整的<strong>用户注册 → 邮箱验证码确认 → 登录 → JWT Token 鉴权 → 忘记密码重置</strong>流程。所有受保护的 API 端点均需要用户认证，WebSocket 连接也通过 JWT 验证身份，确保实时通信的安全性。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">Docker</span>
+          <span class="highlight-tag">Nginx</span>
+          <span class="highlight-tag">SSL/HTTPS</span>
+          <span class="highlight-tag">JWT 认证</span>
+          <span class="highlight-tag">邮件服务</span>
+        </div>
+      </div>
+
+      <!-- Highlight 6 -->
+      <div class="highlight-card">
+        <div class="highlight-header">
+          <div class="highlight-num">06</div>
+          <div class="highlight-title">规范化的项目管理与多工具协同工作流</div>
+        </div>
+        <div class="highlight-body">
+          项目全程采用专业化的管理工具链：<strong>Gantt Project</strong> 规划 125+ 任务并设定 8 个关键里程碑（Alpha → Beta 0.1 → Beta 0.2 → 1.0 正式版）；<strong>Trello</strong> 看板按团队分类任务、设置截止日期和负责人，实时追踪进度；<strong>Git</strong> 进行版本控制和代码协同；<strong>Discord</strong> 按工作组划分频道进行日常沟通；<strong>Google Drive</strong> 管理文档、周报和工时表。<br><br>
+          团队在开发过程中遇到了多次进度延迟和任务依赖冲突（如 Figma 设计未完成导致 UI 实现阻塞、数据库延迟影响动态显示功能），通过<strong>临时方案替代</strong>（如先用 JSON 模拟数据库）和<strong>灵活调整甘特图</strong>来保障项目整体进度，最终按时交付了功能完整的可玩产品。
+        </div>
+        <div class="highlight-tags">
+          <span class="highlight-tag">Gantt 图</span>
+          <span class="highlight-tag">Trello</span>
+          <span class="highlight-tag">Git 协同</span>
+          <span class="highlight-tag">敏捷调整</span>
+          <span class="highlight-tag">里程碑管理</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+ <!-- Section 3: 设计与管理展示 -->
+ <div class="content-section reveal">
+  <span class="content-section-label">03 — 设计与管理展示</span>
+  <h2>界面设计、项目管理与系统架构</h2>
+  <p>涵盖 Figma 高保真原型、Godot 游戏界面实现、Gantt 甘特图进度规划、Trello 看板任务管理，以及客户端-服务器网络架构设计。</p>
+
+  <!-- 3-A: 甘特图 -->
+  <div class="sub-section-title">甘特图 · 项目进度规划（Gantt Chart）</div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+    上下滚动查看完整甘特图（共 2 页）
+  </div>
+  <div class="gantt-scroll">
+    <div class="gallery-item">
+      <img src="../assets/images/gantt-page-1.png" alt="甘特图总览 — 里程碑与主要阶段">
+      <div class="gallery-item-caption">甘特图总览 / Gantt Overview — 8 个关键里程碑</div>
+    </div>
+    <div class="gallery-item">
+      <img src="../assets/images/gantt-page-2.png" alt="甘特图详情 — 125+ 任务分解">
+      <div class="gallery-item-caption">甘特图详情 / Gantt Full — 125+ 任务拆解与依赖关系</div>
+    </div>
+  </div>
+
+  <!-- 3-B: Trello 看板 -->
+  <div class="sub-section-title">Trello 看板 · 任务跟踪与团队协作</div>
+  <div class="scroll-hint-h">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    左右滑动查看更多看板
+  </div>
+  <div class="trello-scroll">
+    <div class="trello-track">
+      <div class="gallery-item">
+        <img src="../assets/images/trello1.png" alt="Trello 看板 — 前期任务与原型开发">
+        <div class="gallery-item-caption">看板左侧 / 前期准备 · 原型开发 · 游戏机制 · IHM 游戏界面</div>
+      </div>
+      <div class="gallery-item">
+        <img src="../assets/images/trello2.png" alt="Trello 看板 — 服务器实现与最终任务">
+        <div class="gallery-item-caption">看板右侧 / IHM 菜单 · 服务器实现 · 各类界面 · 最终任务</div>
+      </div>
+    </div>
+  </div>
+
+ <!-- 3-C: 游戏界面（横屏手机端） -->
+ <div class="sub-section-title">游戏界面 · Figma 原型与 Godot 实现（横屏）</div>
+ <div class="scroll-hint">
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+   上下滚动查看全部界面
+ </div>
+ <div class="design-gallery-scroll">
+
+   <!-- 全宽：游戏主界面 -->
+   <div class="image-gallery">
+     <div class="gallery-item">
+       <img src="../assets/images/HOME.png" alt="游戏主页">
+       <div class="gallery-item-caption">主页 / Home — 主菜单与功能入口</div>
+     </div>
+   </div>
+
+   <!-- 两列：查找房间 & 注册 -->
+   <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/FIND LOBBY.png" alt="查找房间">
+       <div class="gallery-item-caption">查找房间 / Find Lobby — 房间列表与筛选</div>
+     </div>
+     <div class="gallery-item">
+       <img src="../assets/images/Create Account.png" alt="创建账户">
+       <div class="gallery-item-caption">注册 / Create Account — 用户注册表单</div>
+     </div>
+   </div>
+
+   <!-- 两列：设置 & 支持反馈 -->
+   <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/SETTINGS.png" alt="参数设置">
+       <div class="gallery-item-caption">设置 / Paramètres — 音量、语言与隐私</div>
+     </div>
+     <div class="gallery-item">
+       <img src="../assets/images/AIDE.png" alt="用户反馈">
+       <div class="gallery-item-caption">支持 / Support — 评分反馈与问题提交</div>
+     </div>
+   </div>
+
+   <!-- 全宽：游戏回合主界面 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/YourTURN.png" alt="回合界面">
+       <div class="gallery-item-caption">游戏主界面 / Your Turn — 棋盘全览、骰子、玩家信息面板</div>
+     </div>
+   </div>
+
+   <!-- 两列：支付租金 & 拍卖 -->
+   <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/PayRent.png" alt="支付租金">
+       <div class="gallery-item-caption">支付租金 / Rent Due — 地产卡片与交易弹窗</div>
+     </div>
+     <div class="gallery-item">
+       <img src="../assets/images/Auction.png" alt="拍卖界面">
+       <div class="gallery-item-caption">拍卖 / Auction — 地产竞拍机制</div>
+     </div>
+   </div>
+
+   <!-- 全宽：游戏内设置 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/SettingsGame.png" alt="游戏内设置">
+       <div class="gallery-item-caption">游戏内设置 / In-Game Settings — 音效调节与规则查看</div>
+     </div>
+   </div>
+
+   <!-- 3-D: 设计资产与系统架构 -->
+   <div class="sub-section-title" style="margin-top:3rem;">设计资产 · 卡牌、组件库与系统架构</div>
+
+   <!-- 全宽：地产卡片总览 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/PROPERTY-DESCRIPTION.png" alt="地产卡片总览">
+       <div class="gallery-item-caption">地产卡片系统 / Property Cards — 30+ 城市地产与机场、景点卡片设计</div>
+     </div>
+   </div>
+
+   <!-- 全宽：Token 角色设计 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/TOKEN Bottom.png" alt="角色 Token 设计">
+       <div class="gallery-item-caption">角色 Token / Player Tokens — 多状态设计（默认、选中、禁用）</div>
+     </div>
+   </div>
+
+   <!-- 全宽：地产卡牌 -->
+   <div class="image-gallery">
+    <div class="gallery-item">
+      <img src="../assets/images/PROPERTY-DESCRIPTION.png" alt="地产卡片总览">
+      <div class="gallery-item-caption">地产卡片系统 / Property Cards — 30+ 城市地产与机场、景点卡片设计</div>
+    </div>
+  </div>
+
+   <!-- 全宽：事件卡牌 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/Action Text.png" alt="事件卡牌设计">
+       <div class="gallery-item-caption">事件卡牌 / Event Cards — Lucky Suitcase & Mystery Passport 全部卡牌内容</div>
+     </div>
+   </div>
+
+   <!-- 全宽：Figma 棋盘资产 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/组件1.png" alt="Figma 棋盘组件与资产">
+       <div class="gallery-item-caption">Figma 组件 ① / Board Assets — 街道、车站、角落、行动格、骰子与棋盘总览</div>
+     </div>
+   </div>
+
+   <!-- 两列：Figma 组件 ② & ③ -->
+   <div class="image-gallery grid-2" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/组件2.png" alt="Figma UI 组件库">
+       <div class="gallery-item-caption">Figma 组件 ② / UI Components — 评分、按钮、表情与表单控件</div>
+     </div>
+     <div class="gallery-item">
+       <img src="../assets/images/组件3.png" alt="Figma 交互组件库">
+       <div class="gallery-item-caption">Figma 组件 ③ / Interactive Components — 筛选器、房间类型与按钮状态</div>
+     </div>
+   </div>
+
+   <!-- 全宽：系统架构图 -->
+   <div class="image-gallery" style="margin-top:1.5rem;">
+     <div class="gallery-item">
+       <img src="../assets/images/reseaux-system.png" alt="系统架构图" style="background:#fff;">
+       <div class="gallery-item-caption">系统架构 / Technical Architecture — 客户端 · Apache · FastAPI · PostgreSQL · Docker</div>
+     </div>
+   </div>
+
+ </div>
+
+</div>
+
+  <!-- Section 4: 项目成果 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">04 — 项目成果与总结</span>
+    <h2>成果与收获</h2>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      向下滚动查看完整内容
+    </div>
+
+    <div class="overview-scroll">
+      <p>经过三个多月的团队协作，项目最终按期交付了名为 <strong>"Vacashon"</strong> 的完整多人在线棋盘游戏产品，实现了从概念设计到可运行产品的全流程落地。</p>
+
+      <p><strong>产品交付成果方面</strong>，游戏包含完整的账户系统（注册、登录、邮箱验证、密码找回）；支持创建公开/私密房间并选择角色Token的大厅系统；完整的大富翁核心玩法——掷骰子移动、购买地产、建造房屋、收取租金、事件卡牌、海关机制、破产判定和计时赛制；全套 UI 界面覆盖主菜单、规则说明、设置面板、反馈系统和游戏内操作界面；以及沉浸式的音乐和音效系统，支持独立音量调节且偏好设置自动持久化。</p>
+
+      <p><strong>个人贡献方面</strong>，作为 HCI 团队核心成员，本人主导了 UI 原型设计的全流程：从零学习 Figma 并独立完成了完整的高保真交互原型，涵盖页面布局规划、屏幕构图设计、玩家卡片与交互按钮的视觉设计、棋盘界面样式、Token 选择与玩家数量选项界面、统一配色方案、Logo 初稿设计（借助 AI 工具辅助）以及交互过渡动效的设计。随后在 Godot 中完成了全部技术实现：使用节点系统搭建页面结构并适配响应式布局，通过 GDScript 开发动画效果和弹窗行为，实现了按钮操作、场景切换、条件显示（如私密房间的密码输入框）等核心 UI 功能，并持续优化代码确保用户交互与设计意图的一致性。在开发后期，与后端和游戏逻辑团队紧密合作，确保 HCI 模块顺利集成到整体系统中。总计投入约 <strong>125 小时</strong>。</p>
+
+      <p><strong>技术能力提升方面</strong>，通过本项目快速掌握了 Figma 原型设计工具和 Godot 游戏引擎的 UI 开发能力，积累了从设计稿到工程实现的完整经验。深入理解了客户端-服务器架构下的实时通信机制（WebSocket + REST API），以及多人在线游戏的状态同步原理。同时在 PostgreSQL 数据库设计、Docker 容器化部署、Git 多分支协作等方面也获得了实践经验。</p>
+
+      <p><strong>项目管理与协作能力方面</strong>，亲身经历了 125+ 任务的甘特图规划和 8 个里程碑版本的迭代发布过程，深刻理解了软件项目中进度管理、任务依赖和风险应对的重要性。在跨组协作中，学会了在设计未定稿时用临时方案推进开发、在多分支合并冲突时快速定位和解决问题，以及在不同团队之间对齐需求和同步进度的沟通技巧。</p>
+
+      <p>总体而言，本项目不仅是一次综合性的技术实践，更是一次接近真实工作环境的团队协作训练。虽然受限于时间，部分计划功能（如摄像机跟随系统、新手教程、多主题背景、AI 机器人玩家等）未能最终实现，但团队在有限时间内交付了功能完整、界面精美、可多人在线游玩的产品，这一成果是所有成员共同努力的结果。</p>
+    </div>
+  </div>
+
+
+  <!-- Section 5: 链接与文档 -->
+  <div class="content-section reveal">
+    <span class="content-section-label">05 — 链接与文档</span>
+    <h2>项目资源</h2>
+    <p>项目相关的协作平台、代码仓库与正式交付文档。</p>
+
+    <div class="sub-section-title" style="margin-top:1.5rem;">外部链接</div>
+    <div class="links-grid">
+      <a href="https://git.unistra.fr/s.berthelot/projet-integrateur-a6" target="_blank" rel="noopener" class="link-card ext-card">
+        <div class="link-card-icon">📦</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Git 代码仓库</div>
+          <div class="link-card-desc">GitLab · Unistra</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="https://trello.com/invite/b/67a36a107ede73cea8e9f401/ATTIc516e87b77f4852a370e70f8f233296b9C9D9BCE/projet-integrateur" target="_blank" rel="noopener" class="link-card ext-card">
+        <div class="link-card-icon">📋</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Trello 任务看板</div>
+          <div class="link-card-desc">Trello Board</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="https://discord.gg/dWt3pYGjAg" target="_blank" rel="noopener" class="link-card ext-card">
+        <div class="link-card-icon">💬</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Discord 协作服务器</div>
+          <div class="link-card-desc">Team Communication</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="https://drive.google.com/drive/folders/1nF-yzMAur7TAHl3947Ap-wQg5ran1foC?usp=sharing" target="_blank" rel="noopener" class="link-card ext-card">
+        <div class="link-card-icon">📁</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Google Drive 文档库</div>
+          <div class="link-card-desc">Docs · Sheets · Reports</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+    </div>
+
+    <div class="sub-section-title">项目文档</div>
+    <div class="links-grid">
+      <a href="../documents/FINAL REPORT - Projet intégrateur Group 6A.pdf" target="_blank" class="link-card doc-card">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Final Report</div>
+          <div class="link-card-desc">项目最终报告</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="../documents/Specifications - Projet intégrateur Group 6A.pdf" target="_blank" class="link-card doc-card">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Specifications</div>
+          <div class="link-card-desc">功能规格说明书</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="../documents/USER DOCUMENTATION - Projet intégrateur Group 6A.pdf" target="_blank" class="link-card doc-card">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-info">
+          <div class="link-card-title">User Documentation</div>
+          <div class="link-card-desc">用户使用文档</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="../documents/COMMUNICATION REPORT - Projet intégrateur Group 6A.pdf" target="_blank" class="link-card doc-card">
+        <div class="link-card-icon">📄</div>
+        <div class="link-card-info">
+          <div class="link-card-title">Communication Report</div>
+          <div class="link-card-desc">项目传播与推广报告</div>
+        </div>
+        <div class="link-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- Footer Navigation -->
+<footer class="project-footer">
+  <div class="footer-nav">
+    <a href="../index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      返回主页
+    </a>
+  </div>
+  <div class="footer-nav">
+    <a href="../index.html#projects">
+      查看所有项目
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
