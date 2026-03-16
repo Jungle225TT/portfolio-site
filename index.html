@@ -1131,12 +1131,125 @@ footer .leaf {
   .skills-container { grid-template-columns: 1fr 1fr; }
   .ai-container { grid-template-columns: 1fr; }
   .contact-links { flex-wrap: wrap; }
+
+  /* 隐藏照片背后的装饰边框 */
+  .about-photo-decor {
+    display: none;
+  }
+  .about-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 确保图片充满容器且不拉伸 */
+  }
 }
 
 @media (max-width: 600px) {
   .about-stats { grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
   .skills-container { grid-template-columns: 1fr; }
   .hero-cta { flex-direction: column; align-items: center; }
+}
+
+/* ===== Visitor Modal ===== */
+.visitor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 26, 18, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.visitor-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.visitor-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transform: translateY(20px);
+  transition: transform 0.4s ease;
+  position: relative;
+}
+.visitor-modal-overlay.active .visitor-modal {
+  transform: translateY(0);
+}
+.visitor-modal h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--green-light);
+}
+.visitor-modal p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.modal-form-group {
+  margin-bottom: 1rem;
+}
+.modal-input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.modal-input:focus { border-color: var(--green-light); }
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.modal-btn-submit {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+  color: var(--bg-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.modal-btn-submit:hover { transform: translateY(-2px); }
+.modal-btn-skip {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.modal-btn-skip:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+}
+.close-modal {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
 }
 </style>
 </head>
@@ -1537,6 +1650,29 @@ footer .leaf {
   </div>
 </section>
 
+<div class="visitor-modal-overlay" id="visitorModal">
+  <div class="visitor-modal">
+    <button class="close-modal" onclick="closeModal()">✕</button>
+    <h3>欢迎来到我的数字花园 🌿</h3>
+    <p>如果您是 HR 或面试官，欢迎留下您的信息，以便我后续为您提供更详细的简历和项目资料。</p>
+    
+    <div class="modal-form-group">
+      <input type="text" id="vName" class="modal-input" placeholder="您的称呼 (如: 张女士 / HR)">
+    </div>
+    <div class="modal-form-group">
+      <input type="text" id="vCompany" class="modal-input" placeholder="您的公司名称">
+    </div>
+    <div class="modal-form-group">
+      <input type="email" id="vEmail" class="modal-input" placeholder="您的联系邮箱 (选填)">
+    </div>
+    
+    <div class="modal-actions">
+      <button class="modal-btn-skip" onclick="closeModal()">直接浏览</button>
+      <button class="modal-btn-submit" onclick="submitVisitorInfo()" id="submitBtn">提交进入</button>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer>
   <p>© 2026 姜亭汀 <span class="leaf">🌿</span> Digital Garden — Built with passion & code</p>
@@ -1802,6 +1938,97 @@ function askQuick(text) {
   chatInput.value = text;
   sendMessage();
 }
+
+// ===== Visitor Tracking & Modal Logic =====
+// 替换为你部署的 Google Apps Script Web App URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbzqAS6Mrpe-vME72turGlgWRJhh-f41QQSb5TNEQqwPsXmqBobJxv88JPjzG4k1S4E6/exec'; 
+
+// 生成唯一会话ID，用于将提交的信息和最终停留时间匹配
+let sessionId = sessionStorage.getItem('jtt_session_id');
+if (!sessionId) {
+  sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+  sessionStorage.setItem('jtt_session_id', sessionId);
+}
+
+// 记录进入页面的时间
+const startTime = Date.now();
+
+// 页面加载后判断是否弹窗 (用sessionStorage保证每次会话只弹一次)
+window.addEventListener('DOMContentLoaded', () => {
+  if (!sessionStorage.getItem('jtt_modal_shown')) {
+    setTimeout(() => {
+      document.getElementById('visitorModal').classList.add('active');
+    }, 1500); // 延迟 1.5秒 弹出，体验更好
+  }
+});
+
+function closeModal() {
+  document.getElementById('visitorModal').classList.remove('active');
+  sessionStorage.setItem('jtt_modal_shown', 'true');
+  
+  // 如果用户跳过，记录一个匿名访问
+  sendToGoogleSheet('submitForm', {
+    sessionId: sessionId,
+    name: '匿名访客',
+    company: '未提供',
+    email: '未提供'
+  });
+}
+
+function submitVisitorInfo() {
+  const name = document.getElementById('vName').value.trim();
+  const company = document.getElementById('vCompany').value.trim();
+  const email = document.getElementById('vEmail').value.trim();
+  const btn = document.getElementById('submitBtn');
+  
+  if(!name || !company) {
+    alert("简单留个称呼和公司就可以啦~");
+    return;
+  }
+  
+  btn.textContent = "提交中...";
+  btn.style.opacity = "0.7";
+  
+  sendToGoogleSheet('submitForm', {
+    sessionId: sessionId,
+    name: name,
+    company: company,
+    email: email || '未提供'
+  }).then(() => {
+    document.getElementById('visitorModal').classList.remove('active');
+    sessionStorage.setItem('jtt_modal_shown', 'true');
+  }).catch(() => {
+    // 即使失败也让用户进入网页
+    document.getElementById('visitorModal').classList.remove('active');
+    sessionStorage.setItem('jtt_modal_shown', 'true');
+  });
+}
+
+
+
+// 核心发送数据函数
+function sendToGoogleSheet(action, payload) {
+  return fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors', // 避免跨域问题
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, ...payload })
+  });
+}
+
+// 在用户关闭网页/离开页面时，计算停留时间并发送更新
+window.addEventListener('beforeunload', () => {
+  const timeSpent = Math.round((Date.now() - startTime) / 1000); // 换算成秒
+  
+  // 使用 navigator.sendBeacon 是为了保证在页面关闭时数据也能发出去
+  const blob = new Blob([JSON.stringify({
+    action: 'updateTime',
+    sessionId: sessionId,
+    timeSpent: timeSpent
+  })], { type: 'text/plain' });
+  
+  navigator.sendBeacon(API_URL, blob);
+});
 
 </script>
 
